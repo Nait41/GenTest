@@ -63,7 +63,33 @@ public class OptionsController extends javafx.application.Application{
     private ToggleButton mediumRangeToggle;
 
     @FXML
+    private Button unloadAlgsButton;
+
+    @FXML
+    private Button loadAlgsButton;
+
+    @FXML
     void initialize() throws FileNotFoundException {
+
+        FileInputStream loadAlgsStream = new FileInputStream("C:\\Program Files\\gentest_obr\\loadAlgsFile.png");
+        Image loadAlgsImage = new Image(loadAlgsStream);
+        ImageView loadAlgsView = new ImageView(loadAlgsImage);
+        loadAlgsButton.graphicProperty().setValue(loadAlgsView);
+
+        Tooltip loadAlgsTip = new Tooltip();
+        loadAlgsTip.setText("Нажмите, для того, чтобы загрузить новый файл с алгоритмами");
+        loadAlgsTip.setStyle("-fx-text-fill: #cf6400;");
+        loadAlgsButton.setTooltip(loadAlgsTip);
+
+        FileInputStream unloadAlgsStream = new FileInputStream("C:\\Program Files\\gentest_obr\\saveAlgsFile.png");
+        Image unloadAlgsImage = new Image(unloadAlgsStream);
+        ImageView unloadAlgsView = new ImageView(unloadAlgsImage);
+        unloadAlgsButton.graphicProperty().setValue(unloadAlgsView);
+
+        Tooltip unloadAlgsTip = new Tooltip();
+        unloadAlgsTip.setText("Нажмите, для того, чтобы сохранить текущий файл с алгоритмами");
+        unloadAlgsTip.setStyle("-fx-text-fill: #cf6400;");
+        unloadAlgsButton.setTooltip(unloadAlgsTip);
 
         FileInputStream closeStream = new FileInputStream("C:\\Program Files\\gentest_obr\\logout.png");
         Image closeImage = new Image(closeStream);

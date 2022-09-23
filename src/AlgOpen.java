@@ -18,21 +18,7 @@ public class AlgOpen {
         for(int i = 0; i < workbook.getSheetAt(0).getPhysicalNumberOfRows();i++)
         {
             infoList.algs.add(new ArrayList<>());
-            if(workbook.getSheetAt(0).getRow(i).getCell(0).getStringCellValue().equals(""))
-            {
-                if(workbook.getSheetAt(0).getRow(i-1).getCell(0).getStringCellValue().equals(""))
-                {
-                    infoList.algs.get(i).add(workbook.getSheetAt(0).getRow(i-2).getCell(0).getStringCellValue());
-                }
-                else
-                {
-                    infoList.algs.get(i).add(workbook.getSheetAt(0).getRow(i-1).getCell(0).getStringCellValue());
-                }
-            }
-            else
-            {
-                infoList.algs.get(i).add(workbook.getSheetAt(0).getRow(i).getCell(0).getStringCellValue());
-            }
+            infoList.algs.get(i).add(workbook.getSheetAt(0).getRow(i).getCell(0).getStringCellValue());
             if(workbook.getSheetAt(0).getRow(i).getCell(1).getCellType() == CellType.NUMERIC){
                 Double num = workbook.getSheetAt(0).getRow(i).getCell(1).getNumericCellValue();
                 infoList.algs.get(i).add(num.toString());
@@ -70,17 +56,15 @@ public class AlgOpen {
                     }
                 }
             }
-            if(workbook.getSheetAt(0).getRow(i).getCell(3) != null && workbook.getSheetAt(0).getRow(i).getCell(4) != null)
-            {
-                if(!workbook.getSheetAt(0).getRow(i).getCell(3).getStringCellValue().equals("") && !workbook.getSheetAt(0).getRow(i).getCell(4).getStringCellValue().equals(""))
+            if (workbook.getSheetAt(0).getRow(i).getPhysicalNumberOfCells() > 3) {
+                infoList.algs.get(i).add(workbook.getSheetAt(0).getRow(i).getCell(3).getStringCellValue());
+                if(!infoList.uniqBact.contains(workbook.getSheetAt(0).getRow(i).getCell(3).getStringCellValue()))
                 {
-                    infoList.algs.get(i).add(workbook.getSheetAt(0).getRow(i).getCell(3).getStringCellValue());
-                    infoList.algs.get(i).add(workbook.getSheetAt(0).getRow(i).getCell(4).getStringCellValue());
-                    if(!infoList.uniqBact.contains(workbook.getSheetAt(0).getRow(i).getCell(3).getStringCellValue()))
-                    {
-                        infoList.uniqBact.add(workbook.getSheetAt(0).getRow(i).getCell(3).getStringCellValue());
-                    }
+                    infoList.uniqBact.add(workbook.getSheetAt(0).getRow(i).getCell(3).getStringCellValue());
                 }
+            }
+            if (workbook.getSheetAt(0).getRow(i).getPhysicalNumberOfCells() > 4) {
+                infoList.algs.get(i).add(workbook.getSheetAt(0).getRow(i).getCell(4).getStringCellValue());
             }
         }
         workbook.close();

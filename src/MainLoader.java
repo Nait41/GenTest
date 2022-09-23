@@ -1,5 +1,6 @@
 import data.ExceptionList;
 import data.InfoList;
+import javafx.application.Platform;
 import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
 import org.apache.poi.xwpf.usermodel.*;
 import org.apache.xmlbeans.XmlCursor;
@@ -8,6 +9,7 @@ import org.openxmlformats.schemas.wordprocessingml.x2006.main.*;
 import javax.swing.*;
 import java.io.*;
 import java.math.BigInteger;
+import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -58,10 +60,13 @@ public class MainLoader extends JFrame {
         run.setText(infoList.fileName.replace(".xlsx", ""));
     }
 
-    public void setFourTableFormatForSecond(InfoList infoList, int numberTable){
+    public void setFourTableFormatForSecond(InfoList infoList, int numberTable, MainController mainController){
         ArrayList<ArrayList<String>> genusSpecies = new ArrayList<>();
         genusSpecies.addAll(infoList.genus);
         genusSpecies.addAll(infoList.species);
+        double lowLoadStatus;
+        double currentStatus = 0;
+        lowLoadStatus = 100.0 / workbook.getTables().get(0).getRow(1).getCell(0).getTables().get(numberTable).getRows().size();
         for(int i = 1; i < workbook.getTables().get(0).getRow(1).getCell(0).getTables().get(numberTable).getRows().size();i++){
             for (int j = 0; j < genusSpecies.size(); j++)
             {
@@ -150,8 +155,19 @@ public class MainLoader extends JFrame {
                     run.setFontSize(9);
                     run.setFontFamily("Century Gothic");
                     run.setText("не определен");
-                    ExceptionList.exceptBact.add(new ArrayList<>());
-                    ExceptionList.exceptBact.get(ExceptionList.exceptBact.size()-1).add(workbook.getTables().get(0).getRow(1).getCell(0).getTables().get(numberTable).getRow(i).getCell(0).getText());
+                    boolean checkExceptBact = false;
+                    for(int t = 0; t< ExceptionList.exceptBact.size();t++)
+                    {
+                        if(ExceptionList.exceptBact.get(t).get(0).equals(workbook.getTables().get(0).getRow(1)
+                                .getCell(0).getTables().get(numberTable).getRow(i).getCell(0).getText())){
+                            checkExceptBact = true;
+                            break;
+                        }
+                    }
+                    if(!checkExceptBact){
+                        ExceptionList.exceptBact.add(new ArrayList<>());
+                        ExceptionList.exceptBact.get(ExceptionList.exceptBact.size()-1).add(workbook.getTables().get(0).getRow(1).getCell(0).getTables().get(numberTable).getRow(i).getCell(0).getText());
+                    }
                     MainController.exceptCheck = true;
                 }
                 if(workbook.getTables().get(0).getRow(1).getCell(0).getTables().get(numberTable).getRow(i).getCell(2).getText().equals("")){
@@ -167,7 +183,22 @@ public class MainLoader extends JFrame {
                     run.setText("отсутствует/крайне низкое/не идентифицирован");
                 }
             }
+            DecimalFormat df = new DecimalFormat("###.##");
+            currentStatus += lowLoadStatus;
+            double finalCurrentStatus = Double.parseDouble(df.format(currentStatus).replace(",", "."));
+            Platform.runLater(new Runnable() {
+                @Override
+                public void run() {
+                    mainController.lowLoadText.setText("Дополнительная проверка: " + finalCurrentStatus + "%");
+                }
+            });
         }
+        Platform.runLater(new Runnable() {
+            @Override
+            public void run() {
+                mainController.lowLoadText.setText("");
+            }
+        });
     }
 
     public void setAdditionForThird(InfoList infoList, int numberTable){
@@ -347,10 +378,13 @@ public class MainLoader extends JFrame {
         run.setText(String.format("%(.2f",(firm/acti)));
     }
 
-    public void setFiveFormat(InfoList infoList, int numberTable){
+    public void setFiveFormat(InfoList infoList, int numberTable, MainController mainController){
         ArrayList<ArrayList<String>> genusSpecies = new ArrayList<>();
         genusSpecies.addAll(infoList.genus);
         genusSpecies.addAll(infoList.species);
+        double lowLoadStatus;
+        double currentStatus = 0;
+        lowLoadStatus = 100.0 / workbook.getTables().get(numberTable).getRows().size();
         for(int i = 1; i < workbook.getTables().get(numberTable).getRows().size();i++){
             for (int j = 0; j < genusSpecies.size(); j++)
             {
@@ -430,8 +464,18 @@ public class MainLoader extends JFrame {
                     run.setFontSize(9);
                     run.setFontFamily("Century Gothic");
                     run.setText("не определен");
-                    ExceptionList.exceptBact.add(new ArrayList<>());
-                    ExceptionList.exceptBact.get(ExceptionList.exceptBact.size()-1).add(workbook.getTables().get(numberTable).getRow(i).getCell(0).getText());
+                    boolean checkExceptBact = false;
+                    for(int t = 0; t< ExceptionList.exceptBact.size();t++)
+                    {
+                        if(ExceptionList.exceptBact.get(t).get(0).equals(workbook.getTables().get(numberTable).getRow(i).getCell(0).getText())){
+                            checkExceptBact = true;
+                            break;
+                        }
+                    }
+                    if(!checkExceptBact){
+                        ExceptionList.exceptBact.add(new ArrayList<>());
+                        ExceptionList.exceptBact.get(ExceptionList.exceptBact.size()-1).add(workbook.getTables().get(numberTable).getRow(i).getCell(0).getText());
+                    }
                     MainController.exceptCheck = true;
                 }
                 if(workbook.getTables().get(numberTable).getRow(i).getCell(3).getText().equals("")){
@@ -447,13 +491,31 @@ public class MainLoader extends JFrame {
                     run.setText("отсутствует/крайне низкое/не идентифицирован");
                 }
             }
+            DecimalFormat df = new DecimalFormat("###.##");
+            currentStatus += lowLoadStatus;
+            double finalCurrentStatus = Double.parseDouble(df.format(currentStatus).replace(",", "."));
+            Platform.runLater(new Runnable() {
+                @Override
+                public void run() {
+                    mainController.lowLoadText.setText("Дополнительная проверка: " + finalCurrentStatus + "%");
+                }
+            });
         }
+        Platform.runLater(new Runnable() {
+            @Override
+            public void run() {
+                mainController.lowLoadText.setText("");
+            }
+        });
     }
 
-    public void setFourFormat(InfoList infoList, int numberTable){
+    public void setFourFormat(InfoList infoList, int numberTable, MainController mainController){
         ArrayList<ArrayList<String>> genusSpecies = new ArrayList<>();
         genusSpecies.addAll(infoList.genus);
         genusSpecies.addAll(infoList.species);
+        double lowLoadStatus;
+        double currentStatus = 0;
+        lowLoadStatus = 100.0 / workbook.getTables().get(numberTable).getRows().size();
         for(int i = 1; i < workbook.getTables().get(numberTable).getRows().size();i++){
             for (int j = 0; j < genusSpecies.size(); j++)
             {
@@ -545,8 +607,18 @@ public class MainLoader extends JFrame {
                     run.setFontSize(9);
                     run.setFontFamily("Century Gothic");
                     run.setText("не определен");
-                    ExceptionList.exceptBact.add(new ArrayList<>());
-                    ExceptionList.exceptBact.get(ExceptionList.exceptBact.size()-1).add(workbook.getTables().get(numberTable).getRow(i).getCell(0).getText());
+                    boolean checkExceptBact = false;
+                    for(int t = 0; t< ExceptionList.exceptBact.size();t++)
+                    {
+                        if(ExceptionList.exceptBact.get(t).get(0).equals(workbook.getTables().get(numberTable).getRow(i).getCell(0).getText())){
+                            checkExceptBact = true;
+                            break;
+                        }
+                    }
+                    if(!checkExceptBact){
+                        ExceptionList.exceptBact.add(new ArrayList<>());
+                        ExceptionList.exceptBact.get(ExceptionList.exceptBact.size()-1).add(workbook.getTables().get(numberTable).getRow(i).getCell(0).getText());
+                    }
                     MainController.exceptCheck = true;
                 }
                 if(workbook.getTables().get(numberTable).getRow(i).getCell(2).getText().equals("")){
@@ -562,14 +634,32 @@ public class MainLoader extends JFrame {
                     run.setText("отсутствует/крайне низкое/не идентифицирован");
                 }
             }
+            DecimalFormat df = new DecimalFormat("###.##");
+            currentStatus += lowLoadStatus;
+            double finalCurrentStatus = Double.parseDouble(df.format(currentStatus).replace(",", "."));
+            Platform.runLater(new Runnable() {
+                @Override
+                public void run() {
+                    mainController.lowLoadText.setText("Дополнительная проверка: " + finalCurrentStatus + "%");
+                }
+            });
         }
+        Platform.runLater(new Runnable() {
+            @Override
+            public void run() {
+                mainController.lowLoadText.setText("");
+            }
+        });
     }
 
-    public void setThreeDoubleFormat(InfoList infoList, int numberTable){
+    public void setThreeDoubleFormat(InfoList infoList, int numberTable, MainController mainController){
         ArrayList<ArrayList<String>> genusSpecies = new ArrayList<>();
         genusSpecies.addAll(infoList.genus);
         genusSpecies.addAll(infoList.species);
         boolean checkFirst, checkSecond;
+        double lowLoadStatus;
+        double currentStatus = 0;
+        lowLoadStatus = 100.0 / workbook.getTables().get(numberTable).getRows().size();
         for(int i = 1; i < workbook.getTables().get(numberTable).getRows().size();i++){
             checkFirst = true;
             checkSecond = true;
@@ -664,8 +754,18 @@ public class MainLoader extends JFrame {
                         run.setFontSize(9);
                         run.setFontFamily("Century Gothic");
                         run.setText("не определен");
-                        ExceptionList.exceptBact.add(new ArrayList<>());
-                        ExceptionList.exceptBact.get(ExceptionList.exceptBact.size() - 1).add(workbook.getTables().get(numberTable).getRow(i).getCell(0).getText());
+                        boolean checkExceptBact = false;
+                        for(int t = 0; t< ExceptionList.exceptBact.size();t++)
+                        {
+                            if(ExceptionList.exceptBact.get(t).get(0).equals(workbook.getTables().get(numberTable).getRow(i).getCell(0).getText())){
+                                checkExceptBact = true;
+                                break;
+                            }
+                        }
+                        if(!checkExceptBact){
+                            ExceptionList.exceptBact.add(new ArrayList<>());
+                            ExceptionList.exceptBact.get(ExceptionList.exceptBact.size()-1).add(workbook.getTables().get(numberTable).getRow(i).getCell(0).getText());
+                        }
                         MainController.exceptCheck = true;
                     }
                     if (workbook.getTables().get(numberTable).getRow(i).getCell(2).getText().equals("")) {
@@ -682,8 +782,18 @@ public class MainLoader extends JFrame {
                             run.setFontSize(9);
                             run.setFontFamily("Century Gothic");
                             run.setText("не определен");
-                            ExceptionList.exceptBact.add(new ArrayList<>());
-                            ExceptionList.exceptBact.get(ExceptionList.exceptBact.size() - 1).add(workbook.getTables().get(numberTable).getRow(i).getCell(0).getText());
+                            boolean checkExceptBact = false;
+                            for(int t = 0; t< ExceptionList.exceptBact.size();t++)
+                            {
+                                if(ExceptionList.exceptBact.get(t).get(0).equals(workbook.getTables().get(numberTable).getRow(i).getCell(0).getText())){
+                                    checkExceptBact = true;
+                                    break;
+                                }
+                            }
+                            if(!checkExceptBact){
+                                ExceptionList.exceptBact.add(new ArrayList<>());
+                                ExceptionList.exceptBact.get(ExceptionList.exceptBact.size()-1).add(workbook.getTables().get(numberTable).getRow(i).getCell(0).getText());
+                            }
                             MainController.exceptCheck = true;
                         }
                         if (workbook.getTables().get(numberTable).getRow(i).getCell(5).getText().equals("")) {
@@ -695,7 +805,22 @@ public class MainLoader extends JFrame {
                     }
                 }
             }
+            DecimalFormat df = new DecimalFormat("###.##");
+            currentStatus += lowLoadStatus;
+            double finalCurrentStatus = Double.parseDouble(df.format(currentStatus).replace(",", "."));
+            Platform.runLater(new Runnable() {
+                @Override
+                public void run() {
+                    mainController.lowLoadText.setText("Дополнительная проверка: " + finalCurrentStatus + "%");
+                }
+            });
         }
+        Platform.runLater(new Runnable() {
+            @Override
+            public void run() {
+                mainController.lowLoadText.setText("");
+            }
+        });
     }
 
     public void setTwoFormat(InfoList infoList, int numberTable){

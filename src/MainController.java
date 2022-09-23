@@ -17,10 +17,7 @@ import javafx.beans.value.ObservableValue;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
-import javafx.scene.control.Alert;
-import javafx.scene.control.Button;
-import javafx.scene.control.ListView;
-import javafx.scene.control.Tooltip;
+import javafx.scene.control.*;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.AnchorPane;
@@ -84,6 +81,9 @@ public class MainController {
     private Button startButton;
 
     @FXML
+    public Label lowLoadText = new Label("");
+
+    @FXML
     private AnchorPane mainPanel;
 
     @FXML
@@ -137,8 +137,7 @@ public class MainController {
     }
 
     @FXML
-    void initialize() throws FileNotFoundException {
-
+    void initialize() throws FileNotFoundException, InterruptedException {
         exceptPane.setVisible(false);
 
         exceptionButton.setVisible(false);
@@ -212,6 +211,15 @@ public class MainController {
         exceptionTip.setText("Нажмите на кнопку, чтобы посмотреть список проблем");
         exceptionTip.setStyle("-fx-text-fill: turquoise;");
         exceptionButton.setTooltip(exceptionTip);
+
+        algsTable.setOnAction(ActionEvent -> {
+            AlgsTableController algsTableController = new AlgsTableController();
+            try {
+                algsTableController.start(new Stage());
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        });
 
         exceptView.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<String>() {
             ExceptionAnalyzer exceptionAnalyzer = new ExceptionAnalyzer();
@@ -400,21 +408,21 @@ public class MainController {
                                                         loadStatus.setText("Загрузка: " + (counter=getCounter(21, counter)) + " %");
                                                         docLoad.setRatio(infoList);
                                                         loadStatus.setText("Загрузка: " + (counter=getCounter(21, counter)) + " %");
-                                                        docLoad.setFiveFormat(infoList, 4);
+                                                        docLoad.setFiveFormat(infoList, 4, MainController.this);
                                                         loadStatus.setText("Загрузка: " + (counter=getCounter(21, counter)) + " %");
-                                                        docLoad.setFiveFormat(infoList, 5);
+                                                        docLoad.setFiveFormat(infoList, 5, MainController.this);
                                                         loadStatus.setText("Загрузка: " + (counter=getCounter(21, counter)) + " %");
-                                                        docLoad.setFiveFormat(infoList, 6);
+                                                        docLoad.setFiveFormat(infoList, 6, MainController.this);
                                                         loadStatus.setText("Загрузка: " + (counter=getCounter(21, counter)) + " %");
-                                                        docLoad.setFourFormat(infoList, 7);
+                                                        docLoad.setFourFormat(infoList, 7, MainController.this);
                                                         loadStatus.setText("Загрузка: " + (counter=getCounter(21, counter)) + " %");
-                                                        docLoad.setThreeDoubleFormat(infoList, 8);
+                                                        docLoad.setThreeDoubleFormat(infoList, 8, MainController.this);
                                                         loadStatus.setText("Загрузка: " + (counter=getCounter(21, counter)) + " %");
-                                                        docLoad.setThreeDoubleFormat(infoList, 9);
+                                                        docLoad.setThreeDoubleFormat(infoList, 9, MainController.this);
                                                         loadStatus.setText("Загрузка: " + (counter=getCounter(21, counter)) + " %");
-                                                        docLoad.setThreeDoubleFormat(infoList, 10);
+                                                        docLoad.setThreeDoubleFormat(infoList, 10, MainController.this);
                                                         loadStatus.setText("Загрузка: " + (counter=getCounter(21, counter)) + " %");
-                                                        docLoad.setFourFormat(infoList,11);
+                                                        docLoad.setFourFormat(infoList,11, MainController.this);
                                                         loadStatus.setText("Загрузка: " + (counter=getCounter(21, counter)) + " %");
                                                         docLoad.setAddition(infoList);
                                                         loadStatus.setText("Загрузка: " + (counter=getCounter(21, counter)) + " %");
@@ -491,9 +499,9 @@ public class MainController {
                                                             loadStatus.setText("Загрузка: " + (counter=getCounter(10, counter)) + " %");
                                                             docLoad.setFileNameForSecond(infoList);
                                                             loadStatus.setText("Загрузка: " + (counter=getCounter(10, counter)) + " %");
-                                                            docLoad.setFourTableFormatForSecond(infoList, 0);
+                                                            docLoad.setFourTableFormatForSecond(infoList, 0, MainController.this);
                                                             loadStatus.setText("Загрузка: " + (counter=getCounter(10, counter)) + " %");
-                                                            docLoad.setFourTableFormatForSecond(infoList, 1);
+                                                            docLoad.setFourTableFormatForSecond(infoList, 1, MainController.this);
                                                             loadStatus.setText("Загрузка: " + (counter=getCounter(10, counter)) + " %");
                                                             //docLoad.saveSortedTable(infoList, 1, "Third");
                                                             //docLoad.saveSortedTable(infoList, 2, "Fourth");
@@ -557,7 +565,7 @@ public class MainController {
                                                             loadStatus.setText("Загрузка: " + (counter=getCounter(10, counter)) + " %");
                                                             docLoad.setFileNameForThird(infoList);
                                                             loadStatus.setText("Загрузка: " + (counter=getCounter(10, counter)) + " %");
-                                                            docLoad.setFourTableFormatForSecond(infoList, 0);
+                                                            docLoad.setFourTableFormatForSecond(infoList, 0, MainController.this);
                                                             loadStatus.setText("Загрузка: " + (counter=getCounter(10, counter)) + " %");
                                                             docLoad.setAdditionForThird(infoList, 2);
                                                             loadStatus.setText("Загрузка: " + (counter=getCounter(10, counter)) + " %");
@@ -623,27 +631,27 @@ public class MainController {
                                                             loadStatus.setText("Загрузка: " + (counter=getCounter(20, counter)) + " %");
                                                             docLoad.setFileNameForFirst(infoList);
                                                             loadStatus.setText("Загрузка: " + (counter=getCounter(20, counter)) + " %");
-                                                            docLoad.setFourFormat(infoList, 2);
+                                                            docLoad.setFourFormat(infoList, 2, MainController.this);
                                                             loadStatus.setText("Загрузка: " + (counter=getCounter(20, counter)) + " %");
-                                                            docLoad.setFiveFormat(infoList, 3);
+                                                            docLoad.setFiveFormat(infoList, 3, MainController.this);
                                                             loadStatus.setText("Загрузка: " + (counter=getCounter(20, counter)) + " %");
-                                                            docLoad.setFiveFormat(infoList, 4);
+                                                            docLoad.setFiveFormat(infoList, 4, MainController.this);
                                                             loadStatus.setText("Загрузка: " + (counter=getCounter(20, counter)) + " %");
-                                                            docLoad.setFourFormat(infoList, 5);
+                                                            docLoad.setFourFormat(infoList, 5, MainController.this);
                                                             loadStatus.setText("Загрузка: " + (counter=getCounter(20, counter)) + " %");
-                                                            docLoad.setFourFormat(infoList, 6);
+                                                            docLoad.setFourFormat(infoList, 6, MainController.this);
                                                             loadStatus.setText("Загрузка: " + (counter=getCounter(20, counter)) + " %");
-                                                            docLoad.setFourFormat(infoList, 7);
+                                                            docLoad.setFourFormat(infoList, 7, MainController.this);
                                                             loadStatus.setText("Загрузка: " + (counter=getCounter(20, counter)) + " %");
-                                                            docLoad.setFourFormat(infoList, 8);
+                                                            docLoad.setFourFormat(infoList, 8, MainController.this);
                                                             loadStatus.setText("Загрузка: " + (counter=getCounter(20, counter)) + " %");
-                                                            docLoad.setFourFormat(infoList, 9);
+                                                            docLoad.setFourFormat(infoList, 9, MainController.this);
                                                             loadStatus.setText("Загрузка: " + (counter=getCounter(20, counter)) + " %");
-                                                            docLoad.setFourFormat(infoList, 10);
+                                                            docLoad.setFourFormat(infoList, 10, MainController.this);
                                                             loadStatus.setText("Загрузка: " + (counter=getCounter(20, counter)) + " %");
-                                                            docLoad.setFourFormat(infoList, 11);
+                                                            docLoad.setFourFormat(infoList, 11, MainController.this);
                                                             loadStatus.setText("Загрузка: " + (counter=getCounter(20, counter)) + " %");
-                                                            docLoad.setFourFormat(infoList, 12);
+                                                            docLoad.setFourFormat(infoList, 12, MainController.this);
                                                             loadStatus.setText("Загрузка: " + (counter=getCounter(20, counter)) + " %");
                                                             docLoad.setAddition(infoList);
                                                             loadStatus.setText("Загрузка: " + (counter=getCounter(20, counter)) + " %");
@@ -709,17 +717,17 @@ public class MainController {
                                                             loadStatus.setText("Загрузка: " + (counter=getCounter(15, counter)) + " %");
                                                             docLoad.setFileNameForFifth(infoList);
                                                             loadStatus.setText("Загрузка: " + (counter=getCounter(15, counter)) + " %");
-                                                            docLoad.setFourFormat(infoList, 2);
+                                                            docLoad.setFourFormat(infoList, 2, MainController.this);
                                                             loadStatus.setText("Загрузка: " + (counter=getCounter(15, counter)) + " %");
-                                                            docLoad.setFourFormat(infoList, 3);
+                                                            docLoad.setFourFormat(infoList, 3, MainController.this);
                                                             loadStatus.setText("Загрузка: " + (counter=getCounter(15, counter)) + " %");
-                                                            docLoad.setFiveFormat(infoList, 4);
+                                                            docLoad.setFiveFormat(infoList, 4, MainController.this);
                                                             loadStatus.setText("Загрузка: " + (counter=getCounter(15, counter)) + " %");
-                                                            docLoad.setFourFormat(infoList, 5);
+                                                            docLoad.setFourFormat(infoList, 5, MainController.this);
                                                             loadStatus.setText("Загрузка: " + (counter=getCounter(15, counter)) + " %");
-                                                            docLoad.setFourFormat(infoList, 6);
+                                                            docLoad.setFourFormat(infoList, 6, MainController.this);
                                                             loadStatus.setText("Загрузка: " + (counter=getCounter(15, counter)) + " %");
-                                                            docLoad.setFourFormat(infoList, 7);
+                                                            docLoad.setFourFormat(infoList, 7, MainController.this);
                                                             loadStatus.setText("Загрузка: " + (counter=getCounter(15, counter)) + " %");
                                                             docLoad.setAddition(infoList);
                                                             loadStatus.setText("Загрузка: " + (counter=getCounter(15, counter)) + " %");
