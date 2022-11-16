@@ -24,7 +24,7 @@
             <DropShadow />
          </effect>
       </Button>
-      <Text fill="WHITE" layoutX="152.0" layoutY="38.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Введите среднее род бактерии" textAlignment="CENTER" wrappingWidth="347.0">
+      <Text fill="WHITE" layoutX="152.0" layoutY="38.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Введите род бактерии" textAlignment="CENTER" wrappingWidth="347.0">
          <font>
             <Font name="Impact" size="18.0" />
          </font>

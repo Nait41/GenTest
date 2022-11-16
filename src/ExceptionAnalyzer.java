@@ -19,6 +19,7 @@ import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
 import java.io.*;
+import java.util.ArrayList;
 
 public class ExceptionAnalyzer extends javafx.application.Application {
 
@@ -111,7 +112,7 @@ public class ExceptionAnalyzer extends javafx.application.Application {
                 stage.setY(event.getScreenY() + yOffset);
             }
         });
-        stage.getIcons().add(new Image("file:///C:\\Program Files\\gentest_obr\\AppIcon.png"));
+        stage.getIcons().add(new Image("file:///" + Application.rootDirPath + "\\AppIcon.png"));
         stage.setScene(scene);
         stage.show();
     }
@@ -127,6 +128,13 @@ public class ExceptionAnalyzer extends javafx.application.Application {
 
     @FXML
     void initialize() throws FileNotFoundException {
+
+        if(MainController.hintsOption){
+            Tooltip closeStart = new Tooltip();
+            closeStart.setText("Нажмите, для того, чтобы закрыть окно");
+            closeStart.setStyle("-fx-text-fill: turquoise;");
+            closeButton.setTooltip(closeStart);
+        }
 
         TableColumn bacteriaColumn = new TableColumn("Бактерия");
         TableColumn rangeColumn = new TableColumn<>("Средние значение популяции");
@@ -157,19 +165,15 @@ public class ExceptionAnalyzer extends javafx.application.Application {
                     @Override
                     public void handle(TableColumn.CellEditEvent<ExceptionInfo, String> t) {
                         ExceptionList.exceptBact.get(t.getTablePosition().getRow()).add(1, t.getNewValue());
+                        mainTable.getItems().get(t.getTablePosition().getRow()).setRange(t.getNewValue());
                     }
                 }
         );
 
-        FileInputStream closeStream = new FileInputStream("C:\\Program Files\\gentest_obr\\logout.png");
+        FileInputStream closeStream = new FileInputStream("D:\\gentest_obr\\logout.png");
         Image closeImage = new Image(closeStream);
         ImageView closeView = new ImageView(closeImage);
         closeButton.graphicProperty().setValue(closeView);
-
-        Tooltip closeStart = new Tooltip();
-        closeStart.setText("Нажмите, для того, чтобы закрыть окно");
-        closeStart.setStyle("-fx-text-fill: turquoise;");
-        closeButton.setTooltip(closeStart);
 
         saveButton.setOnAction(actionEvent -> {
             ErrorController errorController = new ErrorController();
@@ -182,7 +186,7 @@ public class ExceptionAnalyzer extends javafx.application.Application {
             new Thread(){
                 @Override
                 public void run(){
-                    File file = new File("C:\\Program Files\\gentest_obr\\algs.xlsx");
+                    File file = new File("D:\\gentest_obr\\algs.xlsx");
                     String filePath = file.getPath();
                     Workbook workbook = null;
                     try {
@@ -190,18 +194,35 @@ public class ExceptionAnalyzer extends javafx.application.Application {
                     } catch (IOException e) {
                         e.printStackTrace();
                     }
+                    int counterCurrentBacter = 0;
+                    ArrayList<ArrayList<String>> missingBacter = new ArrayList<>();
+                    int countMissing = 0;
                     for(int j = 0; j < ExceptionList.exceptBact.size();j++) {
                         if (ExceptionList.exceptBact.get(j).size() > 1) {
+                            counterCurrentBacter++;
                             workbook.getSheetAt(0).createRow(workbook.getSheetAt(0).getPhysicalNumberOfRows()).createCell(0)
                                     .setCellValue(ExceptionList.exceptBact.get(j).get(0));
                             workbook.getSheetAt(0).getRow(workbook.getSheetAt(0).getPhysicalNumberOfRows()-1).createCell(1)
                                     .setCellValue(ExceptionList.exceptBact.get(j).get(1));
                             workbook.getSheetAt(0).getRow(workbook.getSheetAt(0).getPhysicalNumberOfRows()-1).createCell(2)
                                     .setCellValue("среднее значение");
+                        } else
+                        {
+                            missingBacter.add(new ArrayList<>());
+                            missingBacter.get(countMissing).add(ExceptionList.exceptBact.get(j).get(0));
+                            countMissing++;
                         }
                     }
+                    if(ExceptionList.exceptBact.size() == counterCurrentBacter)
+                    {
+                        ExceptionList.exceptBact = null;
+                        MainController.mediumRangeOption = false;
+                    }
+                    else{
+                        ExceptionList.exceptBact = missingBacter;
+                    }
                     try {
-                        workbook.write(new FileOutputStream(new File("C:\\Program Files\\gentest_obr\\algs.xlsx")));
+                        workbook.write(new FileOutputStream(new File(Application.rootDirPath + "\\algs.xlsx")));
                     } catch (IOException e) {
                         e.printStackTrace();
                     }

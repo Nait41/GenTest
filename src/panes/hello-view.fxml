@@ -18,7 +18,7 @@
                         <Font name="Impact" size="39.0" />
                     </font>
                 </Text>
-                  <Button fx:id="dirUnloadButton" layoutX="767.0" layoutY="18.0" minWidth="38.0" mnemonicParsing="false" prefHeight="34.0" prefWidth="46.0" style="-fx-background-color: #00c7c7;" textFill="WHITE">
+                  <Button fx:id="dirUnloadButton" layoutX="710.0" layoutY="18.0" minWidth="38.0" mnemonicParsing="false" prefHeight="34.0" prefWidth="46.0" style="-fx-background-color: #00c7c7;" textFill="WHITE">
                       <font>
                           <Font name="Impact" size="14.0" />
                       </font>
@@ -26,7 +26,7 @@
                           <DropShadow />
                       </effect>
                   </Button>
-                <Button fx:id="dirLoadButton" layoutX="710.0" layoutY="18.0" mnemonicParsing="false" prefHeight="34.0" prefWidth="46.0" style="-fx-background-color: #00c7c7;" textFill="WHITE">
+                <Button fx:id="dirLoadButton" layoutX="653.0" layoutY="18.0" mnemonicParsing="false" prefHeight="34.0" prefWidth="46.0" style="-fx-background-color: #00c7c7;" textFill="WHITE">
                     <font>
                         <Font name="Impact" size="14.0" />
                     </font>
@@ -43,7 +43,7 @@
                </effect>
             </Button>
             <AnchorPane layoutY="57.0" prefHeight="24.0" prefWidth="1018.0" style="-fx-background-color: #00c7c7;" />
-            <Button fx:id="exceptionButton" layoutX="653.0" layoutY="18.0" mnemonicParsing="false" prefHeight="34.0" prefWidth="46.0" style="-fx-background-color: #FFD700;" textFill="WHITE">
+            <Button fx:id="exceptionButton" layoutX="596.0" layoutY="18.0" mnemonicParsing="false" prefHeight="34.0" prefWidth="46.0" style="-fx-background-color: #FFD700;" textFill="WHITE">
                <font>
                   <Font name="Impact" size="14.0" />
                </font>
@@ -60,6 +60,14 @@
                </effect>
             </Button>
             <Button fx:id="algsTable" layoutX="824.0" layoutY="18.0" minWidth="38.0" mnemonicParsing="false" prefHeight="34.0" prefWidth="46.0" style="-fx-background-color: #00c7c7;" textFill="WHITE">
+               <font>
+                  <Font name="Impact" size="14.0" />
+               </font>
+               <effect>
+                  <DropShadow />
+               </effect>
+            </Button>
+            <Button fx:id="sampleEditButton" disable="true" layoutX="767.0" layoutY="18.0" minWidth="38.0" mnemonicParsing="false" prefHeight="34.0" prefWidth="46.0" style="-fx-background-color: #00c7c7;" textFill="WHITE">
                <font>
                   <Font name="Impact" size="14.0" />
                </font>
@@ -113,7 +121,12 @@
             </font>
         </Text>
       <ButtonBar layoutX="458.0" layoutY="111.0" prefHeight="40.0" prefWidth="200.0" />
-      <AnchorPane fx:id="exceptPane" layoutX="232.0" layoutY="14.0" prefHeight="290.0" prefWidth="410.0" style="-fx-background-color: #00949e; -fx-background-radius: 20;" visible="false">
+      <Label fx:id="lowLoadText" layoutX="476.0" layoutY="165.0" prefHeight="34.0" prefWidth="453.0" textFill="WHITE">
+         <font>
+            <Font name="Impact" size="28.0" />
+         </font>
+      </Label>
+      <AnchorPane fx:id="exceptPane" layoutX="174.0" layoutY="14.0" prefHeight="290.0" prefWidth="410.0" style="-fx-background-color: #00949e; -fx-background-radius: 20;">
          <effect>
             <DropShadow />
          </effect>
@@ -126,10 +139,5 @@
             </Text>
          </children>
       </AnchorPane>
-      <Label fx:id="lowLoadText" layoutX="476.0" layoutY="165.0" prefHeight="34.0" prefWidth="453.0" textFill="WHITE">
-         <font>
-            <Font name="Impact" size="28.0" />
-         </font>
-      </Label>
     </children>
 </AnchorPane>

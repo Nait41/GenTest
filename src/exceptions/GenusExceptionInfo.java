@@ -14,11 +14,11 @@ public class GenusExceptionInfo {
         this.bacteria = bacteria;
     }
 
-    public String getRange() {
+    public String getGenus() {
         return genus;
     }
 
-    public void setRange(String range) {
+    public void setGenus(String range) {
         this.genus = range;
     }
 }

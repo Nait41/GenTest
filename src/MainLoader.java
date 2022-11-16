@@ -2,6 +2,7 @@ import data.ExceptionList;
 import data.InfoList;
 import javafx.application.Platform;
 import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
+import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.xwpf.usermodel.*;
 import org.apache.xmlbeans.XmlCursor;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.*;
@@ -20,11 +21,15 @@ public class MainLoader extends JFrame {
     SortedTable sortedTable;
     String nameObr;
     public MainLoader(String nameObr) throws IOException, InvalidFormatException {
-        File file = new File("C:\\Program Files\\gentest_obr\\" + nameObr + ".docx");
-        workbook = new XWPFDocument(new FileInputStream(file));
+        if (!MainController.mediumRangeOption)
+        {
+            File file = new File(Application.rootDirPath + "\\" + nameObr + ".docx");
+            workbook = new XWPFDocument(new FileInputStream(file));
+        }
         if (MainController.mediumRangeOption){
-            File fileException = new File("C:\\Program Files\\gentest_obr\\exceptionCheckObrFile\\" + nameObr + ".docx");
+            File fileException = new File(Application.rootDirPath + "\\exceptionCheckObrFile\\" + nameObr + ".docx");
             workbookTemp = new XWPFDocument(new FileInputStream(fileException));
+            workbook = new XWPFDocument(new FileInputStream(fileException));
         }
         this.nameObr = nameObr;
     }
@@ -60,138 +65,196 @@ public class MainLoader extends JFrame {
         run.setText(infoList.fileName.replace(".xlsx", ""));
     }
 
+    public void setBioIndex(InfoList infoList, int numberTable){
+        if(nameObr.equals("obr_4")){
+            XWPFRun run = workbook.getTables().get(numberTable).getRow(1).getCell(2).getParagraphs().get(0).createRun();
+            run.setFontSize(9);
+            run.setFontFamily("Verdana");
+            run.setText(infoList.bioIndex.get(0));
+            run = workbook.getTables().get(numberTable).getRow(1).getCell(3).getParagraphs().get(0).createRun();
+            run.setFontSize(9);
+            run.setFontFamily("Verdana");
+            run.setText(infoList.bioIndex.get(1));
+        }
+        if(nameObr.equals("obr_3") || nameObr.equals("obr")){
+            XWPFRun run = workbook.getTables().get(numberTable).getRow(1).getCell(2).getParagraphs().get(0).createRun();
+            run.setFontSize(12);
+            run.setFontFamily("Century Gothic");
+            run.setText(infoList.bioIndex.get(0));
+            run.setColor("ffffff");
+            run.setBold(true);
+            run = workbook.getTables().get(numberTable).getRow(1).getCell(3).getParagraphs().get(0).createRun();
+            run.setFontSize(12);
+            run.setFontFamily("Century Gothic");
+            run.setText(infoList.bioIndex.get(1));
+            run.setColor("ffffff");
+            run.setBold(true);
+        }
+        if(nameObr.equals("obr_2") || nameObr.equals("obr_1")){
+            XWPFRun run = workbook.getTables().get(0).getRow(1).getCell(0).getTables().get(numberTable).getRow(0).getCell(2).getParagraphs().get(1).createRun();
+            run.setFontSize(9);
+            run.setFontFamily("Century Gothic");
+            run.setText(infoList.bioIndex.get(0));
+            run.setColor("0db3b3");
+            run.setBold(true);
+            run = workbook.getTables().get(0).getRow(1).getCell(0).getTables().get(numberTable).getRow(0).getCell(3).getParagraphs().get(0).createRun();
+            run.setFontSize(9);
+            run.setFontFamily("Century Gothic");
+            run.setText(infoList.bioIndex.get(1));
+            run.setColor("0db3b3");
+            run.setBold(true);
+        }
+    }
+
     public void setFourTableFormatForSecond(InfoList infoList, int numberTable, MainController mainController){
         ArrayList<ArrayList<String>> genusSpecies = new ArrayList<>();
         genusSpecies.addAll(infoList.genus);
         genusSpecies.addAll(infoList.species);
         double lowLoadStatus;
         double currentStatus = 0;
+        boolean checkMediumRange = true;
         lowLoadStatus = 100.0 / workbook.getTables().get(0).getRow(1).getCell(0).getTables().get(numberTable).getRows().size();
-        for(int i = 1; i < workbook.getTables().get(0).getRow(1).getCell(0).getTables().get(numberTable).getRows().size();i++){
-            for (int j = 0; j < genusSpecies.size(); j++)
-            {
-                if(genusSpecies.get(j).get(0).equals(workbook.getTables().get(0).getRow(1).getCell(0).getTables().get(numberTable).getRow(i).getCell(0).getText())
-                        || (genusSpecies.get(j).get(0).contains(workbook.getTables().get(0).getRow(1).getCell(0).getTables().get(numberTable).getRow(i).getCell(0).getText())
-                        && genusSpecies.get(j).get(0).contains("/")
-                        && !genusSpecies.get(j).get(0).contains(workbook.getTables().get(0).getRow(1).getCell(0).getTables().get(numberTable).getRow(i).getCell(0).getText() + "_"))
-                        || genusSpecies.get(j).get(0).equals(workbook.getTables().get(0).getRow(1).getCell(0).getTables().get(numberTable).getRow(i).getCell(0).getText().
-                        replace(" ", "_"))
-                        || genusSpecies.get(j).get(0).equals(workbook.getTables().get(0).getRow(1).getCell(0).getTables().get(numberTable).getRow(i).getCell(0).getText().
-                        replace("_", " "))
-                )
-                {
-                    XWPFRun run = workbook.getTables().get(0).getRow(1).getCell(0).getTables().get(numberTable).getRow(i).getCell(2).getParagraphs().get(0).createRun();
-                    run.setFontSize(9);
-                    run.setFontFamily("Century Gothic");
-                    run.setText(genusSpecies.get(j).get(1));
-                    for(int k = 0; k<infoList.algs.size();k++)
-                    {
-                        if(workbook.getTables().get(0).getRow(1).getCell(0).getTables().get(numberTable).getRow(i).getCell(0).getText().equals(infoList.algs.get(k).get(0))
-                                || (infoList.algs.get(k).get(0).contains(workbook.getTables().get(0).getRow(1).getCell(0).getTables().get(numberTable).getRow(i).getCell(0).getText())
-                                && infoList.algs.get(k).get(0).contains("/")
-                                && !infoList.algs.get(k).get(0).contains(workbook.getTables().get(0).getRow(1).getCell(0).getTables().get(numberTable).getRow(i).getCell(0).getText() + "_"))
-                                || workbook.getTables().get(0).getRow(1).getCell(0).getTables().get(numberTable).getRow(i).getCell(0).getText().equals(infoList.algs.get(k).get(0)
-                                .replace("_", " "))
-                                || workbook.getTables().get(0).getRow(1).getCell(0).getTables().get(numberTable).getRow(i).getCell(0).getText().equals(infoList.algs.get(k).get(0)
-                                .replace(" ", "_"))
-                        )
-                        {
-                            if(workbook.getTables().get(0).getRow(1).getCell(0).getTables().get(numberTable).getRow(i).getCell(2).getParagraphs().get(0).getText().equals("0.0"))
-                            {
-                                run = workbook.getTables().get(0).getRow(1).getCell(0).getTables().get(numberTable).getRow(i).getCell(3).getParagraphs().get(0).createRun();
-                                run.setFontSize(9);
-                                run.setFontFamily("Century Gothic");
-                                run.setText(infoList.algs.get(k).get(2));
+        for(int i = 1; i < workbook.getTables().get(0).getRow(1).getCell(0).getTables().get(numberTable).getRows().size();i++) {
+            if (workbook.getTables().get(0).getRow(1).getCell(0).getTables().get(numberTable).getRows().get(i).getTableCells().size() == 4) {
+                for (int j = 0; j < genusSpecies.size(); j++) {
+                    if (((genusSpecies.get(j).get(0).equals(workbook.getTables().get(0).getRow(1).getCell(0).getTables().get(numberTable).getRow(i).getCell(0).getText())
+                            || genusSpecies.get(j).get(0).equals(workbook.getTables().get(0).getRow(1).getCell(0).getTables().get(numberTable).getRow(i).getCell(0).getText().
+                            replace(" ", "_"))
+                            || genusSpecies.get(j).get(0).equals(workbook.getTables().get(0).getRow(1).getCell(0).getTables().get(numberTable).getRow(i).getCell(0).getText().
+                            replace("_", " ")))
+                            || (genusSpecies.get(j).get(0).contains(workbook.getTables().get(0).getRow(1).getCell(0).getTables().get(numberTable).getRow(i).getCell(0).getText())
+                            && genusSpecies.get(j).get(0).contains("/")
+                            && !genusSpecies.get(j).get(0).contains(workbook.getTables().get(0).getRow(1).getCell(0).getTables().get(numberTable).getRow(i).getCell(0).getText() + "_")))
+                            && !workbook.getTables().get(0).getRow(1).getCell(0).getTables().get(numberTable).getRow(i).getCell(0).getText().equals("")
+                            && workbook.getTables().get(0).getRow(1).getCell(0).getTables().get(numberTable).getRow(i).getCell(2).getText().equals("")
+                    ) {
+                        XWPFRun run = workbook.getTables().get(0).getRow(1).getCell(0).getTables().get(numberTable).getRow(i).getCell(2).getParagraphs().get(0).createRun();
+                        run.setFontSize(9);
+                        run.setFontFamily("Century Gothic");
+                        run.setText(genusSpecies.get(j).get(1));
+                        for (int k = 0; k < infoList.algs.size(); k++) {
+                            if ((workbook.getTables().get(0).getRow(1).getCell(0).getTables().get(numberTable).getRow(i).getCell(0).getText().equals(infoList.algs.get(k).get(0))
+                                    || (infoList.algs.get(k).get(0).contains(workbook.getTables().get(0).getRow(1).getCell(0).getTables().get(numberTable).getRow(i).getCell(0).getText())
+                                    && infoList.algs.get(k).get(0).contains("/")
+                                    && !infoList.algs.get(k).get(0).contains(workbook.getTables().get(0).getRow(1).getCell(0).getTables().get(numberTable).getRow(i).getCell(0).getText() + "_"))
+                                    || workbook.getTables().get(0).getRow(1).getCell(0).getTables().get(numberTable).getRow(i).getCell(0).getText().equals(infoList.algs.get(k).get(0)
+                                    .replace("_", " "))
+                                    || workbook.getTables().get(0).getRow(1).getCell(0).getTables().get(numberTable).getRow(i).getCell(0).getText().equals(infoList.algs.get(k).get(0)
+                                    .replace(" ", "_"))
+                            ) && !workbook.getTables().get(0).getRow(1).getCell(0).getTables().get(numberTable).getRow(i).getCell(0).getText().equals("")
+                            ) {
+                                if (workbook.getTables().get(0).getRow(1).getCell(0).getTables().get(numberTable).getRow(i).getCell(2).getParagraphs().get(0).getText().equals("0.0")) {
+                                    run = workbook.getTables().get(0).getRow(1).getCell(0).getTables().get(numberTable).getRow(i).getCell(3).getParagraphs().get(0).createRun();
+                                    run.setFontSize(9);
+                                    run.setFontFamily("Century Gothic");
+                                    run.setText(infoList.algs.get(k).get(2));
+                                    break;
+                                } else {
+                                    if (!infoList.algs.get(k).get(1).equals("0.0") && checkMediumRange) {
+                                        if (checkValueRange(infoList.algs.get(k).get(1), workbook.getTables().get(0).getRow(1).getCell(0).getTables().get(numberTable).getRow(i).getCell(2).getParagraphs().get(0).getText())) {
+                                            checkMediumRange = false;
+                                            run = workbook.getTables().get(0).getRow(1).getCell(0).getTables().get(numberTable).getRow(i).getCell(3).getParagraphs().get(0).createRun();
+                                            run.setFontSize(9);
+                                            run.setFontFamily("Century Gothic");
+                                            run.setText(infoList.algs.get(k).get(2));
+                                            break;
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                    if (MainController.mediumRangeOption) {
+                        if (workbook.getTables().get(0).getRow(1).getCell(0).getTables().get(numberTable).getRow(i).getTableCells().size() == 4) {
+                            if (workbook.getTables().get(0).getRow(1).getCell(0).getTables().get(numberTable).getRow(i).getCell(1).getText().equals("")) {
+                                for (int k = 0; k < infoList.algs.size(); k++) {
+                                    if (((workbook.getTables().get(0).getRow(1).getCell(0).getTables().get(numberTable).getRow(i).getCell(0).getText().equals(infoList.algs.get(k).get(0))
+                                            || workbook.getTables().get(0).getRow(1).getCell(0).getTables().get(numberTable).getRow(i).getCell(0).getText().equals(infoList.algs.get(k).get(0)
+                                            .replace("_", " "))
+                                            || workbook.getTables().get(0).getRow(1).getCell(0).getTables().get(numberTable).getRow(i).getCell(0).getText().equals(infoList.algs.get(k).get(0)
+                                            .replace(" ", "_")))
+                                            || infoList.algs.get(k).get(0).contains(workbook.getTables().get(0).getRow(1).getCell(0).getTables().get(numberTable).getRow(i).getCell(0).getText())
+                                            && infoList.algs.get(k).get(0).contains("/")
+                                            && !infoList.algs.get(k).get(0).contains(workbook.getTables().get(0).getRow(1).getCell(0).getTables().get(numberTable).getRow(i).getCell(0).getText() + "_"))
+                                    ) {
+                                        if (infoList.algs.get(k).get(2).equals("среднее значение") || infoList.algs.get(k).get(2).equals("Среднее значение")) {
+                                            XWPFRun run = workbook.getTables().get(0).getRow(1).getCell(0).getTables().get(numberTable).getRow(i).getCell(1).getParagraphs().get(0).createRun();
+                                            run.setFontSize(9);
+                                            run.setFontFamily("Century Gothic");
+                                            run.setText(infoList.algs.get(k).get(1));
+                                            run = workbookTemp.getTables().get(0).getRow(1).getCell(0).getTables().get(numberTable).getRow(i).getCell(1).getParagraphs().get(0).createRun();
+                                            run.setFontSize(9);
+                                            run.setFontFamily("Century Gothic");
+                                            run.setText(infoList.algs.get(k).get(1));
+                                            break;
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+                if (workbook.getTables().get(0).getRow(1).getCell(0).getTables().get(numberTable).getRow(i).getTableCells().size() == 4) {
+                    if (workbook.getTables().get(0).getRow(1).getCell(0).getTables().get(numberTable).getRow(i).getCell(1).getText().equals("")) {
+                        XWPFRun run = workbook.getTables().get(0).getRow(1).getCell(0).getTables().get(numberTable).getRow(i).getCell(1).getParagraphs().get(0).createRun();
+                        run.setFontSize(9);
+                        run.setFontFamily("Century Gothic");
+                        run.setText("не определен");
+                        boolean checkExceptBact = false;
+                        for (int t = 0; t < ExceptionList.exceptBact.size(); t++) {
+                            if (ExceptionList.exceptBact.get(t).get(0).equals(workbook.getTables().get(0).getRow(1)
+                                    .getCell(0).getTables().get(numberTable).getRow(i).getCell(0).getText())) {
+                                checkExceptBact = true;
                                 break;
                             }
-                            else{
-                                if(!infoList.algs.get(k).get(1).equals("0.0"))
-                                {
-                                    if(checkValueRange(infoList.algs.get(k).get(1), workbook.getTables().get(0).getRow(1).getCell(0).getTables().get(numberTable).getRow(i).getCell(2).getParagraphs().get(0).getText())){
-                                        run = workbook.getTables().get(0).getRow(1).getCell(0).getTables().get(numberTable).getRow(i).getCell(3).getParagraphs().get(0).createRun();
-                                        run.setFontSize(9);
-                                        run.setFontFamily("Century Gothic");
-                                        run.setText(infoList.algs.get(k).get(2));
-                                        break;
-                                    }
+                        }
+                        if (!checkExceptBact) {
+                            ExceptionList.exceptBact.add(new ArrayList<>());
+                            ExceptionList.exceptBact.get(ExceptionList.exceptBact.size() - 1).add(workbook.getTables().get(0).getRow(1).getCell(0).getTables().get(numberTable).getRow(i).getCell(0).getText());
+                        }
+                        MainController.exceptCheck = true;
+                    }
+                    if (workbook.getTables().get(0).getRow(1).getCell(0).getTables().get(numberTable).getRow(i).getCell(2).getText().equals("")) {
+                        XWPFRun run = workbook.getTables().get(0).getRow(1).getCell(0).getTables().get(numberTable).getRow(i).getCell(2).getParagraphs().get(0).createRun();
+                        run.setFontSize(9);
+                        run.setFontFamily("Century Gothic");
+                        run.setText("0.0");
+                    }
+                    if (workbook.getTables().get(0).getRow(1).getCell(0).getTables().get(numberTable).getRow(i).getCell(3).getText().equals("")) {
+                        XWPFRun run = workbook.getTables().get(0).getRow(1).getCell(0).getTables().get(numberTable).getRow(i).getCell(3).getParagraphs().get(0).createRun();
+                        run.setFontSize(9);
+                        run.setFontFamily("Century Gothic");
+                        run.setText("отсутствует/крайне низкое/не идентифицирован");
+                        /*
+                        if(MainController.missingOption){
+                            boolean check = false;
+                            for(int p = 0;p<infoList.algs.size();p++){
+                                if(infoList.algs.get(p).get(0).contains(workbook.getTables().get(0).getRow(1).getCell(0).getTables().get(numberTable).getRow(i).getCell(0).getText())){
+
                                 }
                             }
-                        }
-                    }
-                }
-                if (MainController.mediumRangeOption)
-                {
-                    if(workbook.getTables().get(0).getRow(1).getCell(0).getTables().get(numberTable).getRow(i).getTableCells().size() == 4) {
-                        if (workbook.getTables().get(0).getRow(1).getCell(0).getTables().get(numberTable).getRow(i).getCell(1).getText().equals("")) {
-                            for(int k = 0; k<infoList.algs.size();k++) {
-                                if ((workbook.getTables().get(0).getRow(1).getCell(0).getTables().get(numberTable).getRow(i).getCell(0).getText().equals(infoList.algs.get(k).get(0))
-                                        || (infoList.algs.get(k).get(0).contains(workbook.getTables().get(0).getRow(1).getCell(0).getTables().get(numberTable).getRow(i).getCell(0).getText())
-                                        && infoList.algs.get(k).get(0).contains("/")
-                                        && !infoList.algs.get(k).get(0).contains(workbook.getTables().get(0).getRow(1).getCell(0).getTables().get(numberTable).getRow(i).getCell(0).getText() + "_")))
-                                        && workbook.getTables().get(0).getRow(1).getCell(0).getTables().get(numberTable).getRow(i).getCell(1).getText().equals("")
-                                ) {
-                                    if(infoList.algs.get(k).get(2).equals("среднее значение") || infoList.algs.get(k).get(2).equals("Среднее значение")){
-                                        XWPFRun run = workbook.getTables().get(0).getRow(1).getCell(0).getTables().get(numberTable).getRow(i).getCell(1).getParagraphs().get(0).createRun();
-                                        run.setFontSize(9);
-                                        run.setFontFamily("Century Gothic");
-                                        run.setText(infoList.algs.get(k).get(1));
-                                        run = workbookTemp.getTables().get(0).getRow(1).getCell(0).getTables().get(numberTable).getRow(i).getCell(1).getParagraphs().get(0).createRun();
-                                        run.setFontSize(9);
-                                        run.setFontFamily("Century Gothic");
-                                        run.setText(infoList.algs.get(k).get(1));
-                                        break;
-                                    }
-                                }
+                            if (!bacterMissing){
+                                infoList.missingExpect.add(new ArrayList<>());
+                                infoList.missingExpect.get(infoList.missingBacterCount).add(workbook.getTables().get(0).getRow(1).getCell(0).getTables().get(numberTable).getRow(i).getCell(0).getText());
+                                infoList.missingBacterCount++;
+                            }else{
+                                bacterMissing = false;
                             }
-                            break;
                         }
+                        */
                     }
                 }
+                checkMediumRange = true;
+                DecimalFormat df = new DecimalFormat("###.##");
+                currentStatus += lowLoadStatus;
+                double finalCurrentStatus = Double.parseDouble(df.format(currentStatus).replace(",", "."));
+                Platform.runLater(new Runnable() {
+                    @Override
+                    public void run() {
+                        mainController.lowLoadText.setText("Дополнительная проверка: " + finalCurrentStatus + "%");
+                    }
+                });
             }
-            if(workbook.getTables().get(0).getRow(1).getCell(0).getTables().get(numberTable).getRow(i).getTableCells().size() == 4)
-            {
-                if(workbook.getTables().get(0).getRow(1).getCell(0).getTables().get(numberTable).getRow(i).getCell(1).getText().equals("")){
-                    XWPFRun run = workbook.getTables().get(0).getRow(1).getCell(0).getTables().get(numberTable).getRow(i).getCell(1).getParagraphs().get(0).createRun();
-                    run.setFontSize(9);
-                    run.setFontFamily("Century Gothic");
-                    run.setText("не определен");
-                    boolean checkExceptBact = false;
-                    for(int t = 0; t< ExceptionList.exceptBact.size();t++)
-                    {
-                        if(ExceptionList.exceptBact.get(t).get(0).equals(workbook.getTables().get(0).getRow(1)
-                                .getCell(0).getTables().get(numberTable).getRow(i).getCell(0).getText())){
-                            checkExceptBact = true;
-                            break;
-                        }
-                    }
-                    if(!checkExceptBact){
-                        ExceptionList.exceptBact.add(new ArrayList<>());
-                        ExceptionList.exceptBact.get(ExceptionList.exceptBact.size()-1).add(workbook.getTables().get(0).getRow(1).getCell(0).getTables().get(numberTable).getRow(i).getCell(0).getText());
-                    }
-                    MainController.exceptCheck = true;
-                }
-                if(workbook.getTables().get(0).getRow(1).getCell(0).getTables().get(numberTable).getRow(i).getCell(2).getText().equals("")){
-                    XWPFRun run = workbook.getTables().get(0).getRow(1).getCell(0).getTables().get(numberTable).getRow(i).getCell(2).getParagraphs().get(0).createRun();
-                    run.setFontSize(9);
-                    run.setFontFamily("Century Gothic");
-                    run.setText("0.0");
-                }
-                if(workbook.getTables().get(0).getRow(1).getCell(0).getTables().get(numberTable).getRow(i).getCell(3).getText().equals("")){
-                    XWPFRun run = workbook.getTables().get(0).getRow(1).getCell(0).getTables().get(numberTable).getRow(i).getCell(3).getParagraphs().get(0).createRun();
-                    run.setFontSize(9);
-                    run.setFontFamily("Century Gothic");
-                    run.setText("отсутствует/крайне низкое/не идентифицирован");
-                }
-            }
-            DecimalFormat df = new DecimalFormat("###.##");
-            currentStatus += lowLoadStatus;
-            double finalCurrentStatus = Double.parseDouble(df.format(currentStatus).replace(",", "."));
-            Platform.runLater(new Runnable() {
-                @Override
-                public void run() {
-                    mainController.lowLoadText.setText("Дополнительная проверка: " + finalCurrentStatus + "%");
-                }
-            });
         }
         Platform.runLater(new Runnable() {
             @Override
@@ -243,7 +306,7 @@ public class MainLoader extends JFrame {
                 {
                     if(infoList.algs.get(k).size() == 5)
                     {
-                        if(infoList.uniqBact.get(d).equals(infoList.algs.get(k).get(3)))
+                        if(infoList.uniqBact.get(d).equals(infoList.algs.get(k).get(3)) && !infoList.algs.get(k).get(4).equals(""))
                         {
                             if(infoList.algs.get(k).get(0).equals(genusSpecies.get(j).get(0))){
                                 if(infoList.algs.get(k).get(1).equals("0.0")){
@@ -330,7 +393,6 @@ public class MainLoader extends JFrame {
                     run.setFontSize(9);
                     run.setFontFamily("Century Gothic");
                     run.setText(infoList.phylum.get(j).get(1));
-
                 }
             }
             if(workbook.getTables().get(2).getRow(i).getCell(1).getText().equals("")){
@@ -384,75 +446,84 @@ public class MainLoader extends JFrame {
         genusSpecies.addAll(infoList.species);
         double lowLoadStatus;
         double currentStatus = 0;
+        boolean checkBacterValue;
         lowLoadStatus = 100.0 / workbook.getTables().get(numberTable).getRows().size();
         for(int i = 1; i < workbook.getTables().get(numberTable).getRows().size();i++){
-            for (int j = 0; j < genusSpecies.size(); j++)
-            {
-                if(genusSpecies.get(j).get(0).equals(workbook.getTables().get(numberTable).getRow(i).getCell(0).getText())
-                        || (genusSpecies.get(j).get(0).contains(workbook.getTables().get(numberTable).getRow(i).getCell(0).getText())
-                        && genusSpecies.get(j).get(0).contains("/")
-                        && !(genusSpecies.get(j).get(0).contains(workbook.getTables().get(numberTable).getRow(i).getCell(0).getText() + "_"))
-                ))
-                {
-                    XWPFRun run = workbook.getTables().get(numberTable).getRow(i).getCell(3).getParagraphs().get(0).createRun();
-                    run.setFontSize(9);
-                    run.setFontFamily("Century Gothic");
-                    run.setText(genusSpecies.get(j).get(1));
-                    for(int k = 0; k<infoList.algs.size();k++)
-                    {
-                        if(workbook.getTables().get(numberTable).getRow(i).getCell(0).getText().equals(infoList.algs.get(k).get(0))
-                                || (infoList.algs.get(k).get(0).contains(workbook.getTables().get(numberTable).getRow(i).getCell(0).getText())
-                                && infoList.algs.get(k).get(0).contains("/")
-                                && !infoList.algs.get(k).get(0).contains(workbook.getTables().get(numberTable).getRow(i).getCell(0).getText() + "_"))
-                        )
-                        {
-                            if(workbook.getTables().get(numberTable).getRow(i).getCell(3).getParagraphs().get(0).getText().equals("0.0"))
-                            {
-                                run = workbook.getTables().get(numberTable).getRow(i).getCell(4).getParagraphs().get(0).createRun();
-                                run.setFontSize(9);
-                                run.setFontFamily("Century Gothic");
-                                run.setText(infoList.algs.get(k).get(2));
-                                break;
-                            }
-                            else{
-                                if(!infoList.algs.get(k).get(1).equals("0.0"))
-                                {
-                                    if(checkValueRange(infoList.algs.get(k).get(1), workbook.getTables().get(numberTable).getRow(i).getCell(3).getParagraphs().get(0).getText())){
-                                        run = workbook.getTables().get(numberTable).getRow(i).getCell(4).getParagraphs().get(0).createRun();
-                                        run.setFontSize(9);
-                                        run.setFontFamily("Century Gothic");
-                                        run.setText(infoList.algs.get(k).get(2));
-                                        break;
+            checkBacterValue = true;
+            if (workbook.getTables().get(numberTable).getRow(i).getTableCells().size() == 5) {
+                for (int j = 0; j < genusSpecies.size(); j++) {
+                    if ((genusSpecies.get(j).get(0).equals(workbook.getTables().get(numberTable).getRow(i).getCell(0).getText())
+                            || (genusSpecies.get(j).get(0).contains(workbook.getTables().get(numberTable).getRow(i).getCell(0).getText())
+                            && genusSpecies.get(j).get(0).contains("/")
+                            && !(genusSpecies.get(j).get(0).contains(workbook.getTables().get(numberTable).getRow(i).getCell(0).getText() + "_")))
+                            || workbook.getTables().get(numberTable).getRow(i).getCell(0).getText().equals(genusSpecies.get(j).get(0)
+                            .replace("_", " "))
+                            || workbook.getTables().get(numberTable).getRow(i).getCell(0).getText().equals(genusSpecies.get(j).get(0)
+                            .replace(" ", "_"))) && checkBacterValue
+
+                    ) {
+                        XWPFRun run = workbook.getTables().get(numberTable).getRow(i).getCell(3).getParagraphs().get(0).createRun();
+                        run.setFontSize(9);
+                        run.setFontFamily("Century Gothic");
+                        run.setText(genusSpecies.get(j).get(1));
+                        checkBacterValue = false;
+                        for (int k = 0; k < infoList.algs.size(); k++) {
+                            if ((workbook.getTables().get(numberTable).getRow(i).getCell(0).getText().equals(infoList.algs.get(k).get(0))
+                                    || (infoList.algs.get(k).get(0).contains(workbook.getTables().get(numberTable).getRow(i).getCell(0).getText())
+                                    && infoList.algs.get(k).get(0).contains("/")
+                                    && !infoList.algs.get(k).get(0).contains(workbook.getTables().get(numberTable).getRow(i).getCell(0).getText() + "_"))
+                                    || workbook.getTables().get(numberTable).getRow(i).getCell(0).getText().equals(infoList.algs.get(k).get(0)
+                                    .replace("_", " "))
+                                    || workbook.getTables().get(numberTable).getRow(i).getCell(0).getText().equals(infoList.algs.get(k).get(0)
+                                    .replace(" ", "_")))
+                            ) {
+                                if (workbook.getTables().get(numberTable).getRow(i).getCell(3).getParagraphs().get(0).getText().equals("0.0")) {
+                                    run = workbook.getTables().get(numberTable).getRow(i).getCell(4).getParagraphs().get(0).createRun();
+                                    run.setFontSize(9);
+                                    run.setFontFamily("Century Gothic");
+                                    run.setText(infoList.algs.get(k).get(2));
+                                    break;
+                                } else {
+                                    if (!infoList.algs.get(k).get(1).equals("0.0")) {
+                                        if (checkValueRange(infoList.algs.get(k).get(1), workbook.getTables().get(numberTable).getRow(i).getCell(3).getParagraphs().get(0).getText())) {
+                                            run = workbook.getTables().get(numberTable).getRow(i).getCell(4).getParagraphs().get(0).createRun();
+                                            run.setFontSize(9);
+                                            run.setFontFamily("Century Gothic");
+                                            run.setText(infoList.algs.get(k).get(2));
+                                            break;
+                                        }
                                     }
                                 }
                             }
                         }
                     }
-                }
-                if (MainController.mediumRangeOption) {
-                    if(workbook.getTables().get(numberTable).getRow(i).getTableCells().size() == 5) {
-                        if (workbook.getTables().get(numberTable).getRow(i).getCell(1).getText().equals("")) {
-                            for(int k = 0; k<infoList.algs.size();k++) {
-                                if ((workbook.getTables().get(numberTable).getRow(i).getCell(0).getText().equals(infoList.algs.get(k).get(0))
-                                        || (infoList.algs.get(k).get(0).contains(workbook.getTables().get(numberTable).getRow(i).getCell(0).getText())
-                                        && infoList.algs.get(k).get(0).contains("/")
-                                        && !infoList.algs.get(k).get(0).contains(workbook.getTables().get(numberTable).getRow(i).getCell(0).getText() + "_"))
-                                        && workbook.getTables().get(numberTable).getRow(i).getCell(1).getText().equals(""))
-                                ) {
-                                    if(infoList.algs.get(k).get(2).equals("среднее значение") || infoList.algs.get(k).get(2).equals("Среднее значение")){
-                                        XWPFRun run = workbook.getTables().get(numberTable).getRow(i).getCell(1).getParagraphs().get(0).createRun();
-                                        run.setFontSize(9);
-                                        run.setFontFamily("Century Gothic");
-                                        run.setText(infoList.algs.get(k).get(1));
-                                        run = workbookTemp.getTables().get(numberTable).getRow(i).getCell(1).getParagraphs().get(0).createRun();
-                                        run.setFontSize(9);
-                                        run.setFontFamily("Century Gothic");
-                                        run.setText(infoList.algs.get(k).get(1));
-                                        break;
+                    if (MainController.mediumRangeOption) {
+                        if (workbook.getTables().get(numberTable).getRow(i).getTableCells().size() == 5) {
+                            if (workbook.getTables().get(numberTable).getRow(i).getCell(1).getText().equals("")) {
+                                for (int k = 0; k < infoList.algs.size(); k++) {
+                                    if (workbook.getTables().get(numberTable).getRow(i).getCell(0).getText().equals(infoList.algs.get(k).get(0))
+                                            || infoList.algs.get(k).get(0).contains(workbook.getTables().get(numberTable).getRow(i).getCell(0).getText())
+                                            && infoList.algs.get(k).get(0).contains("/")
+                                            && !infoList.algs.get(k).get(0).contains(workbook.getTables().get(numberTable).getRow(i).getCell(0).getText() + "_")
+                                            || workbook.getTables().get(numberTable).getRow(i).getCell(0).getText().equals(infoList.algs.get(k).get(0)
+                                            .replace("_", " "))
+                                            || workbook.getTables().get(numberTable).getRow(i).getCell(0).getText().equals(infoList.algs.get(k).get(0)
+                                            .replace(" ", "_"))
+                                    ) {
+                                        if (infoList.algs.get(k).get(2).equals("среднее значение") || infoList.algs.get(k).get(2).equals("Среднее значение")) {
+                                            XWPFRun run = workbook.getTables().get(numberTable).getRow(i).getCell(1).getParagraphs().get(0).createRun();
+                                            run.setFontSize(9);
+                                            run.setFontFamily("Century Gothic");
+                                            run.setText(infoList.algs.get(k).get(1));
+                                            run = workbookTemp.getTables().get(numberTable).getRow(i).getCell(1).getParagraphs().get(0).createRun();
+                                            run.setFontSize(9);
+                                            run.setFontFamily("Century Gothic");
+                                            run.setText(infoList.algs.get(k).get(1));
+                                            break;
+                                        }
                                     }
                                 }
                             }
-                            break;
                         }
                     }
                 }
@@ -580,8 +651,11 @@ public class MainLoader extends JFrame {
                                 if ((workbook.getTables().get(numberTable).getRow(i).getCell(0).getText().equals(infoList.algs.get(k).get(0))
                                         || (infoList.algs.get(k).get(0).contains(workbook.getTables().get(numberTable).getRow(i).getCell(0).getText())
                                         && infoList.algs.get(k).get(0).contains("/")
-                                        && !infoList.algs.get(k).get(0).contains(workbook.getTables().get(numberTable).getRow(i).getCell(0).getText() + "_")))
-                                        && workbook.getTables().get(numberTable).getRow(i).getCell(1).getText().equals("")
+                                        && !infoList.algs.get(k).get(0).contains(workbook.getTables().get(numberTable).getRow(i).getCell(0).getText() + "_"))
+                                        || workbook.getTables().get(numberTable).getRow(i).getCell(0).getText().equals(infoList.algs.get(k).get(0)
+                                        .replace("_", " "))
+                                        || workbook.getTables().get(numberTable).getRow(i).getCell(0).getText().equals(infoList.algs.get(k).get(0)
+                                        .replace(" ", "_")))
                                 ) {
                                     if(infoList.algs.get(k).get(2).equals("среднее значение") || infoList.algs.get(k).get(2).equals("Среднее значение")){
                                         XWPFRun run = workbook.getTables().get(numberTable).getRow(i).getCell(1).getParagraphs().get(0).createRun();
@@ -668,9 +742,14 @@ public class MainLoader extends JFrame {
                 if((genusSpecies.get(j).get(0).equals(workbook.getTables().get(numberTable).getRow(i).getCell(0).getText())
                         || (genusSpecies.get(j).get(0).contains(workbook.getTables().get(numberTable).getRow(i).getCell(0).getText())
                         && genusSpecies.get(j).get(0).contains("/")
-                        && !genusSpecies.get(j).get(0).contains(workbook.getTables().get(numberTable).getRow(i).getCell(0).getText() + "_")) && checkFirst
+                        && !genusSpecies.get(j).get(0).contains(workbook.getTables().get(numberTable).getRow(i).getCell(0).getText() + "_")
+                        )
+                        || workbook.getTables().get(numberTable).getRow(i).getCell(0).getText().equals(genusSpecies.get(j).get(0)
+                        .replace("_", " "))
+                        || workbook.getTables().get(numberTable).getRow(i).getCell(0).getText().equals(genusSpecies.get(j).get(0)
+                        .replace(" ", "_"))) && checkFirst
                         && !workbook.getTables().get(numberTable).getRow(i).getCell(0).getText().equals("")
-                ))
+                )
                 {
                     XWPFRun run = workbook.getTables().get(numberTable).getRow(i).getCell(2).getParagraphs().get(0).createRun();
                     run.setFontSize(9);
@@ -684,7 +763,11 @@ public class MainLoader extends JFrame {
                             || (genusSpecies.get(j).get(0).contains(workbook.getTables().get(numberTable).getRow(i).getCell(3).getText())
                             && genusSpecies.get(j).get(0).contains("/")
                             && !genusSpecies.get(j).get(0).contains(workbook.getTables().get(numberTable).getRow(i).getCell(3).getText() + "_"))
-                    )
+                            || workbook.getTables().get(numberTable).getRow(i).getCell(0).getText().equals(infoList.algs.get(j).get(0)
+                            .replace("_", " "))
+                            || workbook.getTables().get(numberTable).getRow(i).getCell(0).getText().equals(infoList.algs.get(j).get(0)
+                            .replace(" ", "_"))
+                    ) && checkSecond
                             && !workbook.getTables().get(numberTable).getRow(i).getCell(3).getText().equals("")
                     )
                     {
@@ -699,16 +782,19 @@ public class MainLoader extends JFrame {
             if (MainController.mediumRangeOption) {
                 if(workbook.getTables().get(numberTable).getRow(i).getTableCells().size() == 6){
                     boolean checkFirst_, checkSecond_;
+                    checkFirst_ = true;
+                    checkSecond_ = true;
                     for(int k = 0; k<infoList.algs.size();k++) {
-                        checkFirst_ = true;
-                        checkSecond_ = true;
-                        if(!workbook.getTables().get(numberTable).getRow(i).getCell(0).getText().equals(""))
+                        if(!workbook.getTables().get(numberTable).getRow(i).getCell(0).getText().equals("") && checkFirst_)
                         {
-                            if (workbook.getTables().get(numberTable).getRow(i).getCell(0).getText().equals(infoList.algs.get(k).get(0))
+                            if ((workbook.getTables().get(numberTable).getRow(i).getCell(0).getText().equals(infoList.algs.get(k).get(0))
                                     || (infoList.algs.get(k).get(0).contains(workbook.getTables().get(numberTable).getRow(i).getCell(0).getText())
                                     && infoList.algs.get(k).get(0).contains("/")
                                     && !infoList.algs.get(k).get(0).contains(workbook.getTables().get(numberTable).getRow(i).getCell(0).getText() + "_"))
-                                    && checkFirst_ && workbook.getTables().get(numberTable).getRow(i).getCell(1).getText().equals("")
+                                    || workbook.getTables().get(numberTable).getRow(i).getCell(0).getText().equals(infoList.algs.get(k).get(0)
+                                    .replace("_", " "))
+                                    || workbook.getTables().get(numberTable).getRow(i).getCell(0).getText().equals(infoList.algs.get(k).get(0)
+                                    .replace(" ", "_")))
                             ) {
                                 if(infoList.algs.get(k).get(2).equals("среднее значение") || infoList.algs.get(k).get(2).equals("Среднее значение")){
                                     XWPFRun run = workbook.getTables().get(numberTable).getRow(i).getCell(1).getParagraphs().get(0).createRun();
@@ -723,13 +809,16 @@ public class MainLoader extends JFrame {
                                 }
                             }
                         }
-                        if(!workbook.getTables().get(numberTable).getRow(i).getCell(3).getText().equals(""))
+                        if(!workbook.getTables().get(numberTable).getRow(i).getCell(3).getText().equals("") && checkSecond_)
                         {
-                            if (workbook.getTables().get(numberTable).getRow(i).getCell(3).getText().equals(infoList.algs.get(k).get(0))
+                            if ((workbook.getTables().get(numberTable).getRow(i).getCell(3).getText().equals(infoList.algs.get(k).get(0))
                                     || (infoList.algs.get(k).get(0).contains(workbook.getTables().get(numberTable).getRow(i).getCell(3).getText())
                                     && infoList.algs.get(k).get(0).contains("/")
                                     && !infoList.algs.get(k).get(0).contains(workbook.getTables().get(numberTable).getRow(i).getCell(3).getText() + "_"))
-                                    && checkSecond_ && workbook.getTables().get(numberTable).getRow(i).getCell(1).getText().equals("")
+                                    || workbook.getTables().get(numberTable).getRow(i).getCell(3).getText().equals(infoList.algs.get(k).get(0)
+                                    .replace("_", " "))
+                                    || workbook.getTables().get(numberTable).getRow(i).getCell(3).getText().equals(infoList.algs.get(k).get(0)
+                                    .replace(" ", "_")))
                             ) {
                                 if(infoList.algs.get(k).get(2).equals("среднее значение") || infoList.algs.get(k).get(2).equals("Среднее значение")){
                                     XWPFRun run = workbook.getTables().get(numberTable).getRow(i).getCell(4).getParagraphs().get(0).createRun();
@@ -884,7 +973,7 @@ public class MainLoader extends JFrame {
                 {
                     if(infoList.algs.get(k).size() == 5)
                     {
-                        if(infoList.uniqBact.get(d).equals(infoList.algs.get(k).get(3)))
+                        if(infoList.uniqBact.get(d).equals(infoList.algs.get(k).get(3)) && !infoList.algs.get(k).get(4).equals(""))
                         {
                             if(infoList.algs.get(k).get(0).equals(genusSpecies.get(j).get(0))){
                                 if(infoList.algs.get(k).get(1).equals("0.0")){
@@ -961,29 +1050,15 @@ public class MainLoader extends JFrame {
         }
     }
 
-    public void setTwoFormatWithSer(InfoList infoList, int numberTable, String numberSer) throws IOException, ClassNotFoundException {
-        ArrayList<ArrayList<String>> genusSpecies = new ArrayList<>();
-        genusSpecies.addAll(infoList.genus);
-        genusSpecies.addAll(infoList.species);
-        loadSortedTable(numberSer);
+    public void setTwoFormatWithSer(InfoList infoList, int numberTable, String choiceTable) throws IOException, ClassNotFoundException {
         ArrayList<ArrayList<String>> result = new ArrayList<>();
-        for (int i = 0 ; i < sortedTable.tableFirst.size(); i++)
+        if(choiceTable.equals("genus"))
         {
-            result.add(new ArrayList<>());
-            result.get(i).add(sortedTable.tableFirst.get(i));
-        }
-        for(int i = 0; i < sortedTable.tableFirst.size();i++){
-            for (int j = 0; j < genusSpecies.size(); j++)
-            {
-                if(result.get(i).get(0).equals(genusSpecies.get(j).get(0)))
-                {
-                    result.get(i).add(genusSpecies.get(j).get(1));
-                    break;
-                }
-            }
-            if(result.get(i).size() == 1){
-                result.get(i).add("0.0");
-            }
+            result.addAll(infoList.genus);
+        } else if (choiceTable.equals("species")){
+            result.addAll(infoList.species);
+        } else if (choiceTable.equals("family")) {
+            result.addAll(infoList.family);
         }
         Collections.sort(result, new Comparator<ArrayList<String>>() {
             @Override
@@ -992,11 +1067,41 @@ public class MainLoader extends JFrame {
             }
         });
         for(int i = 0; i < result.size();i++){
-            XWPFRun run = workbook.getTables().get(numberTable).getRow(i+1).getCell(0).getParagraphs().get(0).createRun();
+            workbook.getTables().get(numberTable).createRow();
+
+            workbook.getTables().get(numberTable).getRow(workbook.getTables().get(numberTable).getNumberOfRows()-1).getCell(1)
+                    .setWidth(String.valueOf(workbook.getTables().get(numberTable).getRow(0).getCell(0).getWidth()));
+            workbook.getTables().get(numberTable).getRow(workbook.getTables().get(numberTable).getNumberOfRows()-1).getCell(1)
+                    .setWidthType(workbook.getTables().get(numberTable).getRow(0).getCell(1).getWidthType());
+
+            workbook.getTables().get(numberTable).getRow(workbook.getTables().get(numberTable).getNumberOfRows()-1).getCell(0)
+                    .setWidth(String.valueOf(workbook.getTables().get(numberTable).getRow(0).getCell(0).getWidth()));
+            workbook.getTables().get(numberTable).getRow(workbook.getTables().get(numberTable).getNumberOfRows()-1).getCell(1)
+                    .setWidthType(workbook.getTables().get(numberTable).getRow(0).getCell(0).getWidthType());
+
+            workbook.getTables().get(numberTable).getRow(workbook.getTables().get(numberTable).getNumberOfRows()-1).getCell(0).getParagraphs().get(0)
+                    .setIndentationLeft(0);
+            workbook.getTables().get(numberTable).getRow(workbook.getTables().get(numberTable).getNumberOfRows()-1).getCell(1).getParagraphs().get(0)
+                    .setIndentationLeft(200);
+
+            workbook.getTables().get(numberTable).getRow(workbook.getTables().get(numberTable).getNumberOfRows()-1).getCell(0).getParagraphs().get(0)
+                    .setIndentationRight(0);
+            workbook.getTables().get(numberTable).getRow(workbook.getTables().get(numberTable).getNumberOfRows()-1).getCell(1).getParagraphs().get(0)
+                    .setIndentationRight(0);
+
+            workbook.getTables().get(numberTable).getRow(workbook.getTables().get(numberTable).getNumberOfRows()-1).getCell(0).getParagraphs().get(0)
+                    .setIndentationFirstLine(0);
+
+            workbook.getTables().get(numberTable).getRow(workbook.getTables().get(numberTable).getNumberOfRows()-1).getCell(1).getParagraphs().get(0)
+                    .setIndentationFirstLine(0);
+
+            XWPFRun run = workbook.getTables().get(numberTable).getRow(workbook.getTables().get(numberTable).getNumberOfRows()-1).getCell(0).getParagraphs().get(0).createRun();
+            run.removeCarriageReturn();
             run.setFontSize(9);
             run.setFontFamily("Century Gothic");
+            run.setItalic(true);
             run.setText(result.get(i).get(0));
-            run = workbook.getTables().get(numberTable).getRow(i+1).getCell(1).getParagraphs().get(0).createRun();
+            run = workbook.getTables().get(numberTable).getRow(workbook.getTables().get(numberTable).getNumberOfRows()-1).getCell(1).getParagraphs().get(0).createRun();
             run.setFontSize(9);
             run.setFontFamily("Century Gothic");
             run.setText(result.get(i).get(1));
@@ -1004,7 +1109,7 @@ public class MainLoader extends JFrame {
     }
 
     void loadSortedTable(String nameFileSer) throws IOException, ClassNotFoundException {
-        FileInputStream fileInputStream = new FileInputStream("C:\\Program Files\\gentest_obr\\saveSortedTable_" + nameFileSer + ".ser");
+        FileInputStream fileInputStream = new FileInputStream(Application.rootDirPath + "\\saveSortedTable_" + nameFileSer + ".ser");
         ObjectInputStream objectInputStream = new ObjectInputStream(fileInputStream);
         sortedTable = (SortedTable) objectInputStream.readObject();
     }
@@ -1012,17 +1117,15 @@ public class MainLoader extends JFrame {
     void saveSortedTable(InfoList infoList, int numberTable, String nameFileSer) throws IOException, ClassNotFoundException {
         sortedTable = new SortedTable();
         for(int i = 0; i < workbook.getTables().get(numberTable).getRows().size();i++) {
-            System.out.println(workbook.getTables().get(numberTable).getRow(i).getCell(0).getText());
             if(!workbook.getTables().get(numberTable).getRow(i).getCell(0).getText().equals("Классификация")
                     && !workbook.getTables().get(numberTable).getRow(i).getCell(0).getText().equals("РОД БАКТЕРИЙ")
                     && !workbook.getTables().get(numberTable).getRow(i).getCell(0).getText().equals("ВИД БАКТЕРИЙ")
                     && !workbook.getTables().get(numberTable).getRow(i).getCell(0).getText().equals(""))
             {
-                System.out.println(workbook.getTables().get(numberTable).getRow(i).getCell(0).getText());
                 sortedTable.tableFirst.add(workbook.getTables().get(numberTable).getRow(i).getCell(0).getText());
             }
         }
-        FileOutputStream outputStream = new FileOutputStream("C:\\Program Files\\gentest_obr\\saveSortedTable_" + nameFileSer + ".ser");
+        FileOutputStream outputStream = new FileOutputStream(Application.rootDirPath + "\\saveSortedTable_" + nameFileSer + ".ser");
         ObjectOutputStream objectOutputStream = new ObjectOutputStream(outputStream);
         objectOutputStream.writeObject(sortedTable);
         objectOutputStream.close();
@@ -1045,7 +1148,6 @@ public class MainLoader extends JFrame {
                 secondNumber += range.charAt(i);
             }
         }
-
         if(Double.parseDouble(checkNumber) > Double.parseDouble(firstNumber) && Double.parseDouble(checkNumber) < Double.parseDouble(secondNumber)){
             return true;
         }
@@ -1059,7 +1161,7 @@ public class MainLoader extends JFrame {
     }
 
     public void saveObrFile() throws IOException {
-        workbookTemp.write(new FileOutputStream(new File("C:\\Program Files\\gentest_obr\\" + nameObr + ".docx")));
+        workbookTemp.write(new FileOutputStream(new File(Application.rootDirPath + "\\" + nameObr + ".docx")));
         workbookTemp.close();
     }
 }

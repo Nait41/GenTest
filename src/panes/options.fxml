@@ -8,7 +8,7 @@
 <?import javafx.scene.shape.Line?>
 <?import javafx.scene.text.Font?>
 
-<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="459.0" prefWidth="443.0" style="-fx-background-color: #cf6400; -fx-background-radius: 20;" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1" fx:controller="OptionsController">
+<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="527.0" prefWidth="443.0" style="-fx-background-color: #cf6400; -fx-background-radius: 20;" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1" fx:controller="OptionsController">
    <children>
       <Button fx:id="closeButton" layoutX="383.0" layoutY="14.0" minWidth="38.0" mnemonicParsing="false" prefHeight="34.0" prefWidth="46.0" style="-fx-background-color: #FF6347;" textFill="WHITE">
          <font>
@@ -23,7 +23,7 @@
             <Font name="Impact" size="20.0" />
          </font>
       </Label>
-      <AnchorPane layoutY="63.0" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="399.0" prefWidth="443.0" style="-fx-background-color: #ebebeb; -fx-background-radius: 20;">
+      <AnchorPane layoutY="61.0" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="467.0" prefWidth="443.0" style="-fx-background-color: #ebebeb; -fx-background-radius: 20;">
          <children>
             <AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="28.0" prefWidth="443.0" style="-fx-background-color: ebebeb;">
                <children>
@@ -63,48 +63,88 @@
                   <Font name="Impact" size="12.0" />
                </font>
             </ToggleButton>
-            <Label fx:id="optionMediumRange11" layoutX="70.0" layoutY="153.0" prefHeight="22.0" prefWidth="303.0" text="Настройки файлов формирования отчета" textFill="#cf6400">
+            <Label fx:id="optionMediumRange11" layoutX="70.0" layoutY="173.0" prefHeight="22.0" prefWidth="303.0" text="Настройки файлов формирования отчета" textFill="#cf6400">
                <font>
                   <Font name="Impact" size="16.0" />
                </font>
             </Label>
-            <Line endX="342.0" layoutX="101.0" layoutY="139.0" startX="-100.0" stroke="#cf6400">
+            <Line endX="342.0" layoutX="101.0" layoutY="168.0" startX="-100.0" stroke="#cf6400">
                <effect>
                   <DropShadow />
                </effect>
             </Line>
-            <Label fx:id="optionMediumRange2" layoutX="14.0" layoutY="183.0" prefHeight="17.0" prefWidth="303.0" text="Файл с алгоритмами" textFill="#cf6400">
+            <Label fx:id="optionMediumRange2" layoutX="14.0" layoutY="203.0" prefHeight="17.0" prefWidth="303.0" text="Файл с алгоритмами" textFill="#cf6400">
                <font>
                   <Font name="Impact" size="13.0" />
                </font>
             </Label>
-            <Label fx:id="optionMediumRange21" layoutX="14.0" layoutY="214.0" prefHeight="17.0" prefWidth="303.0" text="Шаблон расширенный" textFill="#cf6400">
+            <Label fx:id="optionMediumRange21" layoutX="14.0" layoutY="234.0" prefHeight="17.0" prefWidth="303.0" text="Шаблон расширенный" textFill="#cf6400">
                <font>
                   <Font name="Impact" size="13.0" />
                </font>
             </Label>
-            <Label fx:id="optionMediumRange211" layoutX="14.0" layoutY="248.0" prefHeight="17.0" prefWidth="313.0" text="Шаблон краткой версии ур. микробиома" textFill="#cf6400">
+            <Label fx:id="optionMediumRange211" layoutX="14.0" layoutY="265.0" prefHeight="17.0" prefWidth="313.0" text="Шаблон краткой версии ур. микробиома" textFill="#cf6400">
                <font>
                   <Font name="Impact" size="13.0" />
                </font>
             </Label>
-            <Label fx:id="optionMediumRange2111" layoutX="14.0" layoutY="282.0" prefHeight="17.0" prefWidth="313.0" text="Шаблон краткой версии микробиома" textFill="#cf6400">
+            <Label fx:id="optionMediumRange2111" layoutX="14.0" layoutY="297.0" prefHeight="17.0" prefWidth="313.0" text="Шаблон краткой версии микробиома" textFill="#cf6400">
                <font>
                   <Font name="Impact" size="13.0" />
                </font>
             </Label>
-            <Label fx:id="optionMediumRange21111" layoutX="14.0" layoutY="319.0" prefHeight="17.0" prefWidth="313.0" text="Шаблон взрослый стандартный" textFill="#cf6400">
+            <Label fx:id="optionMediumRange21111" layoutX="14.0" layoutY="329.0" prefHeight="17.0" prefWidth="313.0" text="Шаблон взрослый стандартный" textFill="#cf6400">
                <font>
                   <Font name="Impact" size="13.0" />
                </font>
             </Label>
-            <Label fx:id="optionMediumRange211111" layoutX="14.0" layoutY="354.0" prefHeight="17.0" prefWidth="313.0" text="Шаблон микробиома кишечника" textFill="#cf6400">
+            <Label fx:id="optionMediumRange211111" layoutX="14.0" layoutY="361.0" prefHeight="17.0" prefWidth="313.0" text="Шаблон микробиома кишечника" textFill="#cf6400">
                <font>
                   <Font name="Impact" size="13.0" />
                </font>
             </Label>
-            <Button fx:id="unloadAlgsButton" layoutX="405.0" layoutY="179.0" mnemonicParsing="false" prefHeight="25.0" prefWidth="31.0" style="-fx-background-color: #cf6400;" />
-            <Button fx:id="loadAlgsButton" layoutX="367.0" layoutY="179.0" mnemonicParsing="false" prefHeight="25.0" prefWidth="31.0" style="-fx-background-color: #cf6400;" />
+            <Button fx:id="unloadAlgsButton" layoutX="405.0" layoutY="199.0" mnemonicParsing="false" prefHeight="25.0" prefWidth="31.0" style="-fx-background-color: #cf6400;" />
+            <Button fx:id="loadAlgsButton" layoutX="367.0" layoutY="199.0" mnemonicParsing="false" prefHeight="25.0" prefWidth="31.0" style="-fx-background-color: #cf6400;" />
+            <Button fx:id="obrLoadButton" layoutX="367.0" layoutY="230.0" mnemonicParsing="false" prefHeight="25.0" prefWidth="31.0" style="-fx-background-color: #cf6400;" />
+            <Button fx:id="obrUnloadButton" layoutX="405.0" layoutY="230.0" mnemonicParsing="false" prefHeight="25.0" prefWidth="31.0" style="-fx-background-color: #cf6400;" />
+            <Button fx:id="obr_1_LoadButton" layoutX="367.0" layoutY="261.0" mnemonicParsing="false" prefHeight="25.0" prefWidth="31.0" style="-fx-background-color: #cf6400;" />
+            <Button fx:id="obr_1_UnloadButton" layoutX="405.0" layoutY="261.0" mnemonicParsing="false" prefHeight="25.0" prefWidth="31.0" style="-fx-background-color: #cf6400;" />
+            <Button fx:id="obr_2_LoadButton" layoutX="367.0" layoutY="293.0" mnemonicParsing="false" prefHeight="25.0" prefWidth="31.0" style="-fx-background-color: #cf6400;" />
+            <Button fx:id="obr_2_UnloadButton" layoutX="405.0" layoutY="293.0" mnemonicParsing="false" prefHeight="25.0" prefWidth="31.0" style="-fx-background-color: #cf6400;" />
+            <Button fx:id="obr_3_LoadButton" layoutX="367.0" layoutY="325.0" mnemonicParsing="false" prefHeight="25.0" prefWidth="31.0" style="-fx-background-color: #cf6400;" />
+            <Button fx:id="obr_3_UnloadButton" layoutX="405.0" layoutY="325.0" mnemonicParsing="false" prefHeight="25.0" prefWidth="31.0" style="-fx-background-color: #cf6400;" />
+            <Button fx:id="obr_4_LoadButton" layoutX="367.0" layoutY="357.0" mnemonicParsing="false" prefHeight="25.0" prefWidth="31.0" style="-fx-background-color: #cf6400;" />
+            <Button fx:id="obr_4_UnloadButton" layoutX="405.0" layoutY="357.0" mnemonicParsing="false" prefHeight="25.0" prefWidth="31.0" style="-fx-background-color: #cf6400;" />
+            <Line endX="342.0" layoutX="101.0" layoutY="396.0" startX="-100.0" stroke="#cf6400">
+               <effect>
+                  <DropShadow />
+               </effect>
+            </Line>
+            <Label fx:id="optionMediumRange111" layoutX="192.0" layoutY="401.0" prefHeight="22.0" prefWidth="60.0" text="Другое" textFill="#cf6400">
+               <font>
+                  <Font name="Impact" size="16.0" />
+               </font>
+            </Label>
+            <Label fx:id="optionMediumRange3" layoutX="14.0" layoutY="431.0" prefHeight="17.0" prefWidth="303.0" text="Включить подсказки на кнопках" textFill="#cf6400">
+               <font>
+                  <Font name="Impact" size="13.0" />
+               </font>
+            </Label>
+            <ToggleButton fx:id="hintsToggle" layoutX="355.0" layoutY="428.0" mnemonicParsing="false" style="-fx-background-color: #ebebeb;" text="Не активно" textFill="#cf6400">
+               <font>
+                  <Font name="Impact" size="12.0" />
+               </font>
+            </ToggleButton>
+            <Label fx:id="optionDescription1" disable="true" layoutX="14.0" layoutY="133.0" prefHeight="17.0" prefWidth="303.0" text="Проверять краткую интерпрет. бактерий в алг." textFill="#cf6400">
+               <font>
+                  <Font name="Impact" size="13.0" />
+               </font>
+            </Label>
+            <ToggleButton fx:id="missingToggle" disable="true" layoutX="355.0" layoutY="130.0" mnemonicParsing="false" style="-fx-background-color: #ebebeb;" text="Не активно" textFill="#cf6400">
+               <font>
+                  <Font name="Impact" size="12.0" />
+               </font>
+            </ToggleButton>
          </children>
       </AnchorPane>
    </children>

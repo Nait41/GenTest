@@ -12,6 +12,7 @@ import java.io.IOException;
 public class Application extends javafx.application.Application {
     private double xOffset;
     private double yOffset;
+    public static String rootDirPath;
     @Override
     public void start(Stage stage) throws IOException {
         FXMLLoader fxmlLoader = new FXMLLoader(Application.class.getResource("panes/hello-view.fxml"));
@@ -33,7 +34,7 @@ public class Application extends javafx.application.Application {
                 stage.setY(event.getScreenY() + yOffset);
             }
         });
-        stage.getIcons().add(new Image("file:///C:\\Program Files\\gentest_obr\\AppIcon.png"));
+        stage.getIcons().add(new Image("file:///" + Application.rootDirPath + "\\AppIcon.png"));
         stage.setScene(scene);
         stage.show();
     }

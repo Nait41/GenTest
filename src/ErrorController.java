@@ -41,7 +41,7 @@ public class ErrorController extends javafx.application.Application{
                 stage.setY(event.getScreenY() + yOffset);
             }
         });
-        stage.getIcons().add(new Image("file:///C:\\Program Files\\gentest_obr\\AppIcon.png"));
+        stage.getIcons().add(new Image("file:///" + Application.rootDirPath + "\\AppIcon.png"));
         stage.setScene(scene);
         stage.show();
     }
@@ -57,15 +57,17 @@ public class ErrorController extends javafx.application.Application{
 
         errorText.setText(MainController.errorMessageStr);
 
-        FileInputStream closeStream = new FileInputStream("C:\\Program Files\\gentest_obr\\logout.png");
+        FileInputStream closeStream = new FileInputStream(Application.rootDirPath + "\\logout.png");
         Image closeImage = new Image(closeStream);
         ImageView closeView = new ImageView(closeImage);
         closeButton.graphicProperty().setValue(closeView);
 
-        Tooltip closeStart = new Tooltip();
-        closeStart.setText("Нажмите, для того, чтобы закрыть окно");
-        closeStart.setStyle("-fx-text-fill:  #a30057;");
-        closeButton.setTooltip(closeStart);
+        if(MainController.hintsOption){
+            Tooltip closeStart = new Tooltip();
+            closeStart.setText("Нажмите, для того, чтобы закрыть окно");
+            closeStart.setStyle("-fx-text-fill:  #a30057;");
+            closeButton.setTooltip(closeStart);
+        }
 
         closeButton.setOnAction(actionEvent -> {
             Stage stage = (Stage) closeButton.getScene().getWindow();

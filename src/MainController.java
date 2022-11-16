@@ -8,6 +8,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.ResourceBundle;
 
+import data.ExceptionList;
 import data.InfoList;
 import fileView.XLXSOpen;
 import javafx.animation.KeyFrame;
@@ -31,9 +32,11 @@ import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
 import static java.lang.Thread.sleep;
 
 public class MainController {
+    public static boolean hintsOption = true;
     public static boolean descriptionOption = false;
     public static boolean genusOption = false;
     public static boolean mediumRangeOption = false;
+    public static boolean missingOption = false;
     public static boolean exceptCheck = false;
     public InfoList infoList;
     AlgOpen alg;
@@ -87,7 +90,7 @@ public class MainController {
     private AnchorPane mainPanel;
 
     @FXML
-    private Button closeButton;
+    public Button closeButton;
 
     @FXML
     private Button exceptionButton;
@@ -97,6 +100,9 @@ public class MainController {
 
     @FXML
     private ListView<String> exceptView;
+
+    @FXML
+    private Button sampleEditButton;
 
     @FXML
     private Button options;
@@ -134,48 +140,18 @@ public class MainController {
                 exceptView.getItems().add("Не все бактерии описаны");
             }
         }
+        if(!exceptView.getItems().contains("Список отсутствующих бактерий в образце")){
+            if(DescriptionExceptionAnalyzer.descriptionExcept && missingOption){
+                exceptView.getItems().add("Список отсутствующих бактерий в образце");
+            }
+        }
     }
 
-    @FXML
-    void initialize() throws FileNotFoundException, InterruptedException {
-        exceptPane.setVisible(false);
-
-        exceptionButton.setVisible(false);
-
-        FileInputStream optionsStream = new FileInputStream("C:\\Program Files\\gentest_obr\\options.png");
-        Image optionsImage = new Image(optionsStream);
-        ImageView optionsView = new ImageView(optionsImage);
-        options.graphicProperty().setValue(optionsView);
-
-        FileInputStream loadStream = new FileInputStream("C:\\Program Files\\gentest_obr\\load.png");
-        Image loadImage = new Image(loadStream);
-        ImageView loadView = new ImageView(loadImage);
-        dirLoadButton.graphicProperty().setValue(loadView);
-
-        FileInputStream unloadStream = new FileInputStream("C:\\Program Files\\gentest_obr\\unload.png");
-        Image unloadImage = new Image(unloadStream);
-        ImageView unloadView = new ImageView(unloadImage);
-        dirUnloadButton.graphicProperty().setValue(unloadView);
-
-        FileInputStream startStream = new FileInputStream("C:\\Program Files\\gentest_obr\\start.png");
-        Image startImage = new Image(startStream);
-        ImageView startView = new ImageView(startImage);
-        startButton.graphicProperty().setValue(startView);
-
-        FileInputStream closeStream = new FileInputStream("C:\\Program Files\\gentest_obr\\logout.png");
-        Image closeImage = new Image(closeStream);
-        ImageView closeView = new ImageView(closeImage);
-        closeButton.graphicProperty().setValue(closeView);
-
-        FileInputStream exceptionStream = new FileInputStream("C:\\Program Files\\gentest_obr\\exception.png");
-        Image exceptionImage = new Image(exceptionStream);
-        ImageView exceptionView = new ImageView(exceptionImage);
-        exceptionButton.graphicProperty().setValue(exceptionView);
-
-        FileInputStream algsTableStream = new FileInputStream("C:\\Program Files\\gentest_obr\\algsTable.png");
-        Image algsTableImage = new Image(algsTableStream);
-        ImageView algsTableView = new ImageView(algsTableImage);
-        algsTable.graphicProperty().setValue(algsTableView);
+    public void addHinds(){
+        Tooltip tipSampleEdit = new Tooltip();
+        tipSampleEdit.setText("Нажмите, для того, чтобы перейти к меню изменения шаблонов");
+        tipSampleEdit.setStyle("-fx-text-fill: turquoise;");
+        sampleEditButton.setTooltip(tipSampleEdit);
 
         Tooltip tipAlgsTable = new Tooltip();
         tipAlgsTable.setText("Нажмите, для того, чтобы перейти к редактированию таблицы алгоритмов");
@@ -211,11 +187,140 @@ public class MainController {
         exceptionTip.setText("Нажмите на кнопку, чтобы посмотреть список проблем");
         exceptionTip.setStyle("-fx-text-fill: turquoise;");
         exceptionButton.setTooltip(exceptionTip);
+    }
+
+    public void removeHinds(){
+        algsTable.setTooltip(null);
+        dirLoadButton.setTooltip(null);
+        options.setTooltip(null);
+        dirUnloadButton.setTooltip(null);
+        startButton.setTooltip(null);
+        closeButton.setTooltip(null);
+        exceptionButton.setTooltip(null);
+    }
+
+    public static boolean tempHints = true;
+
+    @FXML
+    void initialize() throws FileNotFoundException, InterruptedException {
+        Timeline timeline = new Timeline(new KeyFrame(Duration.seconds(3), e -> {
+            if (tempHints != hintsOption){
+                tempHints = hintsOption;
+                if (hintsOption == true){
+                    addHinds();
+                } else
+                {
+                    removeHinds();
+                }
+            }
+            if (!mediumRangeOption){
+                if(ExceptionList.exceptBact == null){
+                    System.out.println(1);
+                    if(exceptView.getItems().contains("Не для всех бактерий определены среднии значения популяции")) {
+                        exceptView.getItems().remove("Не для всех бактерий определены среднии значения популяции");
+                    }
+                }
+            }
+            if (!genusOption){
+                if(ExceptionList.genusExceptBact == null){
+                    if(exceptView.getItems().contains("Не для всех бактерий определен род")) {
+                        exceptView.getItems().remove("Не для всех бактерий определен род");
+                    }
+                }
+            }
+            if (!descriptionOption){
+                if(ExceptionList.descriptionExpect == null){
+                    if(exceptView.getItems().contains("Не все бактерии описаны")) {
+                        exceptView.getItems().remove("Не все бактерии описаны");
+                    }
+                }
+            }
+            if (!mediumRangeOption){
+                    if(exceptView.getItems().contains("Не для всех бактерий определены среднии значения популяции")) {
+                        exceptView.getItems().remove("Не для всех бактерий определены среднии значения популяции");
+                    }
+            }
+            if (!genusOption){
+                    if(exceptView.getItems().contains("Не для всех бактерий определен род")) {
+                        exceptView.getItems().remove("Не для всех бактерий определен род");
+                    }
+            }
+            if (!descriptionOption){
+                    if(exceptView.getItems().contains("Не все бактерии описаны")) {
+                        exceptView.getItems().remove("Не все бактерии описаны");
+                    }
+            }
+            if (!missingOption){
+                if(exceptView.getItems().contains("Список отсутствующих бактерий в образце")) {
+                    exceptView.getItems().remove("Список отсутствующих бактерий в образце");
+                }
+            }
+            if (!mediumRangeOption && !descriptionOption && !genusOption && !missingOption)
+            {
+                exceptionButton.setVisible(false);
+                exceptPane.setVisible(false);
+            }
+        }));
+        timeline.setCycleCount(-1);
+        timeline.play();
+        addHinds();
+        exceptPane.setVisible(false);
+        exceptionButton.setVisible(false);
+
+        FileInputStream sampleEditStream = new FileInputStream(Application.rootDirPath +"\\sampleEdit.png");
+        Image sampleEditImage = new Image(sampleEditStream);
+        ImageView sampleEditView = new ImageView(sampleEditImage);
+        sampleEditButton.graphicProperty().setValue(sampleEditView);
+
+        FileInputStream optionsStream = new FileInputStream(Application.rootDirPath + "\\options.png");
+        Image optionsImage = new Image(optionsStream);
+        ImageView optionsView = new ImageView(optionsImage);
+        options.graphicProperty().setValue(optionsView);
+
+        FileInputStream loadStream = new FileInputStream(Application.rootDirPath + "\\load.png");
+        Image loadImage = new Image(loadStream);
+        ImageView loadView = new ImageView(loadImage);
+        dirLoadButton.graphicProperty().setValue(loadView);
+
+        FileInputStream unloadStream = new FileInputStream(Application.rootDirPath + "\\unload.png");
+        Image unloadImage = new Image(unloadStream);
+        ImageView unloadView = new ImageView(unloadImage);
+        dirUnloadButton.graphicProperty().setValue(unloadView);
+
+        FileInputStream startStream = new FileInputStream(Application.rootDirPath + "\\start.png");
+        Image startImage = new Image(startStream);
+        ImageView startView = new ImageView(startImage);
+        startButton.graphicProperty().setValue(startView);
+
+        FileInputStream closeStream = new FileInputStream(Application.rootDirPath + "\\logout.png");
+        Image closeImage = new Image(closeStream);
+        ImageView closeView = new ImageView(closeImage);
+        closeButton.graphicProperty().setValue(closeView);
+
+        FileInputStream exceptionStream = new FileInputStream(Application.rootDirPath + "\\exception.png");
+        Image exceptionImage = new Image(exceptionStream);
+        ImageView exceptionv = new ImageView(exceptionImage);
+        exceptionButton.graphicProperty().setValue(exceptionv);
+
+        FileInputStream algsTableStream = new FileInputStream(Application.rootDirPath + "\\algsTable.png");
+        Image algsTableImage = new Image(algsTableStream);
+        ImageView algsTableView = new ImageView(algsTableImage);
+        algsTable.graphicProperty().setValue(algsTableView);
 
         algsTable.setOnAction(ActionEvent -> {
             AlgsTableController algsTableController = new AlgsTableController();
             try {
                 algsTableController.start(new Stage());
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        });
+
+        sampleEditButton.setOnAction(ActionEvent -> {
+            ErrorController errorController = new ErrorController();
+            try {
+                errorMessageStr = "Данная опция пока что отсутствует";
+                errorController.start(new Stage());
             } catch (IOException e) {
                 e.printStackTrace();
             }
@@ -242,12 +347,14 @@ public class MainController {
                         e.printStackTrace();
                     }
                 }
-                if(selectedException.equals("Не все бактерии описаны")){
+                if(selectedException.equals("Не все бактерии описаны")) {
                     try {
                         descriptionExceptionAnalyzer.start(new Stage());
                     } catch (IOException e) {
                         e.printStackTrace();
                     }
+                }
+                if(selectedException.equals("Список отсутствующих бактерий в образце")){
                 }
             }
         });
@@ -284,6 +391,7 @@ public class MainController {
                 {
                     ExceptionAnalyzer exceptionAnalyzer = new ExceptionAnalyzer();
                     GenusExceptionAnalyzer genusExceptionAnalyzer = new GenusExceptionAnalyzer();
+                    DescriptionExceptionAnalyzer descriptionExceptionAnalyzer = new DescriptionExceptionAnalyzer();
                     if(selectedException.equals("Не для всех бактерий определены среднии значения популяции")){
                         try {
                             exceptionAnalyzer.start(new Stage());
@@ -297,6 +405,15 @@ public class MainController {
                         } catch (IOException e) {
                             e.printStackTrace();
                         }
+                    }
+                    if(selectedException.equals("Не все бактерии описаны")){
+                        try {
+                            descriptionExceptionAnalyzer.start(new Stage());
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                    if(selectedException.equals("Список отсутствующих бактерий в образце")){
                     }
                 }
             }
@@ -368,7 +485,14 @@ public class MainController {
                             {
                                 if(samplePath.size() != 0)
                                 {
+                                    if (!MainController.mediumRangeOption && !MainController.descriptionOption
+                                            && !MainController.genusOption && !MainController.missingOption){
+                                        exceptionButton.setVisible(false);
+                                    }
                                     checkStart = true;
+                                    ExceptionList.exceptBact = new ArrayList<>();
+                                    ExceptionList.genusExceptBact = new ArrayList<>();
+                                    ExceptionList.descriptionExpect = new ArrayList<>();
                                     if(selectedSample.equals("Рассширенный образец")){
                                         new Thread(){
                                             @Override
@@ -378,7 +502,7 @@ public class MainController {
                                                 {
                                                     if(samplePath.get(i).getPath().contains(".xlsx"))
                                                     {
-                                                        loadStatusFileNumber.setText("Обработка " + i + " файла");
+                                                        loadStatusFileNumber.setText("Обработка " + (i+1) + " файла");
                                                         counter = 0;
                                                         infoList = new InfoList();
                                                         try {
@@ -407,6 +531,8 @@ public class MainController {
                                                         docLoad.setPhylum(infoList);
                                                         loadStatus.setText("Загрузка: " + (counter=getCounter(21, counter)) + " %");
                                                         docLoad.setRatio(infoList);
+                                                        xlxsOpen.getBioIndex(infoList);
+                                                        docLoad.setBioIndex(infoList, 1);
                                                         loadStatus.setText("Загрузка: " + (counter=getCounter(21, counter)) + " %");
                                                         docLoad.setFiveFormat(infoList, 4, MainController.this);
                                                         loadStatus.setText("Загрузка: " + (counter=getCounter(21, counter)) + " %");
@@ -426,16 +552,12 @@ public class MainController {
                                                         loadStatus.setText("Загрузка: " + (counter=getCounter(21, counter)) + " %");
                                                         docLoad.setAddition(infoList);
                                                         loadStatus.setText("Загрузка: " + (counter=getCounter(21, counter)) + " %");
-                                                        docLoad.setTwoFormat(infoList, 14);
-                                                        loadStatus.setText("Загрузка: " + (counter=getCounter(21, counter)) + " %");
-                                                        docLoad.setTwoFormat(infoList, 15);
-                                                        loadStatus.setText("Загрузка: " + (counter=getCounter(21, counter)) + " %");
                                                         try {
                                                             //docLoad.saveSortedTable(infoList, 14, "First");
                                                             //docLoad.saveSortedTable(infoList, 15, "Second");
-                                                            docLoad.setTwoFormatWithSer(infoList, 14, SerFileName.FIRST.toString());
+                                                            docLoad.setTwoFormatWithSer(infoList, 14, "genus");
                                                             loadStatus.setText("Загрузка: " + (counter=getCounter(21, counter)) + " %");
-                                                            docLoad.setTwoFormatWithSer(infoList, 15, SerFileName.SECOND.toString());
+                                                            docLoad.setTwoFormatWithSer(infoList, 15, "species");
                                                             loadStatus.setText("Загрузка: " + (counter=getCounter(21, counter)) + " %");
                                                             docLoad.saveFile(infoList, saveSampleDir);
                                                             loadStatus.setText("Загрузка: 100 % ");
@@ -463,7 +585,7 @@ public class MainController {
                                                 loadStatusFileNumber.setText("");
                                                 loadStatus_end.setText("Успешно обработано " + counter_files + " файла(ов)!");
                                                 checkStart = false;
-                                                if(mediumRangeOption || genusOption || descriptionOption){
+                                                if(mediumRangeOption || genusOption || descriptionOption || missingOption){
                                                     exceptionButton.setVisible(true);
                                                 }
                                             }
@@ -476,7 +598,7 @@ public class MainController {
                                                 for (int i = 0; i<samplePath.size();i++) {
                                                     if(samplePath.get(i).getPath().contains(".xlsx"))
                                                     {
-                                                        loadStatusFileNumber.setText("Обработка " + i + " файла");
+                                                        loadStatusFileNumber.setText("Обработка " + (i+1) + " файла");
                                                         counter = 0;
                                                         infoList = new InfoList();
                                                         try {
@@ -489,6 +611,7 @@ public class MainController {
                                                             e.printStackTrace();
                                                         }
                                                         try {
+                                                            xlxsOpen.getFamily(infoList);
                                                             xlxsOpen.getPhylum(infoList);
                                                             loadStatus.setText("Загрузка: " + (counter=getCounter(10, counter)) + " %");
                                                             xlxsOpen.getGenus(infoList);
@@ -498,6 +621,8 @@ public class MainController {
                                                             xlxsOpen.getSpecies(infoList);
                                                             loadStatus.setText("Загрузка: " + (counter=getCounter(10, counter)) + " %");
                                                             docLoad.setFileNameForSecond(infoList);
+                                                            xlxsOpen.getBioIndex(infoList);
+                                                            docLoad.setBioIndex(infoList, 0);
                                                             loadStatus.setText("Загрузка: " + (counter=getCounter(10, counter)) + " %");
                                                             docLoad.setFourTableFormatForSecond(infoList, 0, MainController.this);
                                                             loadStatus.setText("Загрузка: " + (counter=getCounter(10, counter)) + " %");
@@ -505,10 +630,11 @@ public class MainController {
                                                             loadStatus.setText("Загрузка: " + (counter=getCounter(10, counter)) + " %");
                                                             //docLoad.saveSortedTable(infoList, 1, "Third");
                                                             //docLoad.saveSortedTable(infoList, 2, "Fourth");
-                                                            docLoad.setTwoFormatWithSer(infoList, 1, SerFileName.THIRD.toString());
+                                                            docLoad.setTwoFormatWithSer(infoList, 1, "genus");
                                                             loadStatus.setText("Загрузка: " + (counter=getCounter(10, counter)) + " %");
-                                                            docLoad.setTwoFormatWithSer(infoList, 2, SerFileName.FOURTH.toString());
+                                                            docLoad.setTwoFormatWithSer(infoList, 2, "species");
                                                             loadStatus.setText("Загрузка: " + (counter=getCounter(10, counter)) + " %");
+                                                            docLoad.setTwoFormatWithSer(infoList, 3, "family");
                                                             docLoad.saveFile(infoList,saveSampleDir);
                                                             loadStatus.setText("Загрузка: 100 %");
                                                             try {
@@ -529,7 +655,7 @@ public class MainController {
                                                 loadStatusFileNumber.setText("");
                                                 loadStatus_end.setText("Успешно обработано " + counter_files + " файла(ов)!");
                                                 checkStart = false;
-                                                if(mediumRangeOption || genusOption || descriptionOption){
+                                                if(mediumRangeOption || genusOption || descriptionOption || missingOption){
                                                     exceptionButton.setVisible(true);
                                                 }
                                             }
@@ -542,7 +668,7 @@ public class MainController {
                                                 for (int i = 0; i<samplePath.size();i++) {
                                                     if(samplePath.get(i).getPath().contains(".xlsx"))
                                                     {
-                                                        loadStatusFileNumber.setText("Обработка " + i + " файла");
+                                                        loadStatusFileNumber.setText("Обработка " + (i+1) + " файла");
                                                         counter = 0;
                                                         infoList = new InfoList();
                                                         try {
@@ -564,6 +690,8 @@ public class MainController {
                                                             xlxsOpen.getSpecies(infoList);
                                                             loadStatus.setText("Загрузка: " + (counter=getCounter(10, counter)) + " %");
                                                             docLoad.setFileNameForThird(infoList);
+                                                            xlxsOpen.getBioIndex(infoList);
+                                                            docLoad.setBioIndex(infoList, 0);
                                                             loadStatus.setText("Загрузка: " + (counter=getCounter(10, counter)) + " %");
                                                             docLoad.setFourTableFormatForSecond(infoList, 0, MainController.this);
                                                             loadStatus.setText("Загрузка: " + (counter=getCounter(10, counter)) + " %");
@@ -571,9 +699,9 @@ public class MainController {
                                                             loadStatus.setText("Загрузка: " + (counter=getCounter(10, counter)) + " %");
                                                             //docLoad.saveSortedTable(infoList, 1, "Fifth");
                                                             //docLoad.saveSortedTable(infoList, 2, "Sixth");
-                                                            docLoad.setTwoFormatWithSer(infoList, 1, SerFileName.FIFTH.toString());
+                                                            docLoad.setTwoFormatWithSer(infoList, 1, "genus");
                                                             loadStatus.setText("Загрузка: " + (counter=getCounter(10, counter)) + " %");
-                                                            docLoad.setTwoFormatWithSer(infoList, 2, SerFileName.SIXTH.toString());
+                                                            docLoad.setTwoFormatWithSer(infoList, 2, "species");
                                                             loadStatus.setText("Загрузка: " + (counter=getCounter(10, counter)) + " %");
                                                             docLoad.saveFile(infoList, saveSampleDir);
                                                             loadStatus.setText("Загрузка: 100 %");
@@ -595,7 +723,7 @@ public class MainController {
                                                 loadStatusFileNumber.setText("");
                                                 loadStatus_end.setText("Успешно обработано " + counter_files + " файла(ов)!");
                                                 checkStart = false;
-                                                if(mediumRangeOption || genusOption || descriptionOption){
+                                                if(mediumRangeOption || genusOption || descriptionOption || missingOption){
                                                     exceptionButton.setVisible(true);
                                                 }
                                             }
@@ -608,7 +736,7 @@ public class MainController {
                                                 for (int i = 0; i<samplePath.size();i++) {
                                                     if(samplePath.get(i).getPath().contains(".xlsx"))
                                                     {
-                                                        loadStatusFileNumber.setText("Обработка " + i + " файла");
+                                                        loadStatusFileNumber.setText("Обработка " + (i+1) + " файла");
                                                         counter = 0;
                                                         infoList = new InfoList();
                                                         try {
@@ -630,6 +758,8 @@ public class MainController {
                                                             xlxsOpen.getSpecies(infoList);
                                                             loadStatus.setText("Загрузка: " + (counter=getCounter(20, counter)) + " %");
                                                             docLoad.setFileNameForFirst(infoList);
+                                                            xlxsOpen.getBioIndex(infoList);
+                                                            docLoad.setBioIndex(infoList, 1);
                                                             loadStatus.setText("Загрузка: " + (counter=getCounter(20, counter)) + " %");
                                                             docLoad.setFourFormat(infoList, 2, MainController.this);
                                                             loadStatus.setText("Загрузка: " + (counter=getCounter(20, counter)) + " %");
@@ -657,9 +787,9 @@ public class MainController {
                                                             loadStatus.setText("Загрузка: " + (counter=getCounter(20, counter)) + " %");
                                                             //docLoad.saveSortedTable(infoList, 14, "Seventh");
                                                             //docLoad.saveSortedTable(infoList, 15, "Eighth");
-                                                            docLoad.setTwoFormatWithSer(infoList, 14, SerFileName.SEVENTH.toString());
+                                                            docLoad.setTwoFormatWithSer(infoList, 14, "genus");
                                                             loadStatus.setText("Загрузка: " + (counter=getCounter(20, counter)) + " %");
-                                                            docLoad.setTwoFormatWithSer(infoList, 15, SerFileName.EIGHTH.toString());
+                                                            docLoad.setTwoFormatWithSer(infoList, 15, "species");
                                                             loadStatus.setText("Загрузка: " + (counter=getCounter(20, counter)) + " %");
                                                             docLoad.saveFile(infoList, saveSampleDir);
                                                             loadStatus.setText("Загрузка: 100 %");
@@ -681,7 +811,7 @@ public class MainController {
                                                 loadStatusFileNumber.setText("");
                                                 loadStatus_end.setText("Успешно обработано " + counter_files + " файла(ов)!");
                                                 checkStart = false;
-                                                if(mediumRangeOption || genusOption || descriptionOption){
+                                                if(mediumRangeOption || genusOption || descriptionOption || missingOption){
                                                     exceptionButton.setVisible(true);
                                                 }
                                             }
@@ -694,7 +824,7 @@ public class MainController {
                                                 for (int i = 0; i<samplePath.size();i++) {
                                                     if(samplePath.get(i).getPath().contains(".xlsx"))
                                                     {
-                                                        loadStatusFileNumber.setText("Обработка " + i + " файла");
+                                                        loadStatusFileNumber.setText("Обработка " + (i+1) + " файла");
                                                         counter = 0;
                                                         infoList = new InfoList();
                                                         try {
@@ -717,6 +847,8 @@ public class MainController {
                                                             loadStatus.setText("Загрузка: " + (counter=getCounter(15, counter)) + " %");
                                                             docLoad.setFileNameForFifth(infoList);
                                                             loadStatus.setText("Загрузка: " + (counter=getCounter(15, counter)) + " %");
+                                                            xlxsOpen.getBioIndex(infoList);
+                                                            docLoad.setBioIndex(infoList, 1);
                                                             docLoad.setFourFormat(infoList, 2, MainController.this);
                                                             loadStatus.setText("Загрузка: " + (counter=getCounter(15, counter)) + " %");
                                                             docLoad.setFourFormat(infoList, 3, MainController.this);
@@ -733,9 +865,9 @@ public class MainController {
                                                             loadStatus.setText("Загрузка: " + (counter=getCounter(15, counter)) + " %");
                                                             //docLoad.saveSortedTable(infoList, 9, "Ninth");
                                                             //docLoad.saveSortedTable(infoList, 10, "Tenth");
-                                                            docLoad.setTwoFormatWithSer(infoList, 9, SerFileName.NINTH.toString());
+                                                            docLoad.setTwoFormatWithSer(infoList, 9, "genus");
                                                             loadStatus.setText("Загрузка: " + (counter=getCounter(15, counter)) + " %");
-                                                            docLoad.setTwoFormatWithSer(infoList, 10, SerFileName.TENTH.toString());
+                                                            docLoad.setTwoFormatWithSer(infoList, 10, "species");
                                                             loadStatus.setText("Загрузка: " + (counter=getCounter(15, counter)) + " %");
                                                             docLoad.saveFile(infoList, saveSampleDir);
                                                             loadStatus.setText("Загрузка: 100 %");
@@ -757,7 +889,7 @@ public class MainController {
                                                 loadStatusFileNumber.setText("");
                                                 loadStatus_end.setText("Успешно обработано " + counter_files + " файла(ов)!");
                                                 checkStart = false;
-                                                if(mediumRangeOption || genusOption || descriptionOption){
+                                                if(mediumRangeOption || genusOption || descriptionOption || missingOption){
                                                     exceptionButton.setVisible(true);
                                                 }
                                             }

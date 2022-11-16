@@ -12,7 +12,7 @@ import java.util.ArrayList;
 
 public class AlgOpen {
     public AlgOpen(InfoList infoList) throws IOException, InvalidFormatException {
-        File file = new File("C:\\Program Files\\gentest_obr\\algs.xlsx");
+        File file = new File(Application.rootDirPath + "\\algs.xlsx");
         String filePath = file.getPath();
         Workbook workbook = new XSSFWorkbook(new FileInputStream(filePath));
         for(int i = 0; i < workbook.getSheetAt(0).getPhysicalNumberOfRows();i++)
@@ -29,14 +29,42 @@ public class AlgOpen {
             if(MainController.genusOption){
                 if(workbook.getSheetAt(0).getRow(i).getCell(3) == null && workbook.getSheetAt(0).getRow(i).getCell(0) != null)
                 {
-                    ExceptionList.genusExceptBact.add(new ArrayList<>());
-                    ExceptionList.genusExceptBact.get(ExceptionList.genusExceptBact.size()-1).add(workbook.getSheetAt(0).getRow(i).getCell(0).getStringCellValue());
-                    GenusExceptionAnalyzer.genusException = true;
-                } else {
-                    if (workbook.getSheetAt(0).getRow(i).getCell(3).getStringCellValue().equals("") && !workbook.getSheetAt(0).getRow(i).getCell(0).getStringCellValue().equals("")){
+                    if (ExceptionList.genusExceptBact.size() == 0){
                         ExceptionList.genusExceptBact.add(new ArrayList<>());
                         ExceptionList.genusExceptBact.get(ExceptionList.genusExceptBact.size()-1).add(workbook.getSheetAt(0).getRow(i).getCell(0).getStringCellValue());
                         GenusExceptionAnalyzer.genusException = true;
+                    } else {
+                        boolean checkContains = true;
+                        for (int t = 0; t < ExceptionList.genusExceptBact.size();t++){
+                            if(ExceptionList.genusExceptBact.get(t).get(0).contains(workbook.getSheetAt(0).getRow(i).getCell(0).getStringCellValue())){
+                                checkContains = false;
+                            }
+                        }
+                        if (checkContains) {
+                            ExceptionList.genusExceptBact.add(new ArrayList<>());
+                            ExceptionList.genusExceptBact.get(ExceptionList.genusExceptBact.size()-1).add(workbook.getSheetAt(0).getRow(i).getCell(0).getStringCellValue());
+                            GenusExceptionAnalyzer.genusException = true;
+                        }
+                    }
+                } else {
+                    if (workbook.getSheetAt(0).getRow(i).getCell(3).getStringCellValue().equals("") && !workbook.getSheetAt(0).getRow(i).getCell(0).getStringCellValue().equals("")){
+                        if (ExceptionList.genusExceptBact.size() == 0){
+                            ExceptionList.genusExceptBact.add(new ArrayList<>());
+                            ExceptionList.genusExceptBact.get(ExceptionList.genusExceptBact.size()-1).add(workbook.getSheetAt(0).getRow(i).getCell(0).getStringCellValue());
+                            GenusExceptionAnalyzer.genusException = true;
+                        } else {
+                            boolean checkContains = true;
+                            for (int t = 0; t < ExceptionList.genusExceptBact.size();t++){
+                                if(ExceptionList.genusExceptBact.get(t).get(0).contains(workbook.getSheetAt(0).getRow(i).getCell(0).getStringCellValue())){
+                                    checkContains = false;
+                                }
+                            }
+                            if (checkContains) {
+                                ExceptionList.genusExceptBact.add(new ArrayList<>());
+                                ExceptionList.genusExceptBact.get(ExceptionList.genusExceptBact.size()-1).add(workbook.getSheetAt(0).getRow(i).getCell(0).getStringCellValue());
+                                GenusExceptionAnalyzer.genusException = true;
+                            }
+                        }
                     }
                 }
             }

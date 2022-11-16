@@ -116,7 +116,7 @@ public class AlgsTableController extends javafx.application.Application {
                 stage.setY(event.getScreenY() + yOffset);
             }
         });
-        stage.getIcons().add(new Image("file:///C:\\Program Files\\gentest_obr\\AppIcon.png"));
+        stage.getIcons().add(new Image("file:///" + Application.rootDirPath + "\\AppIcon.png"));
         stage.setScene(scene);
         stage.show();
     }
@@ -138,6 +138,23 @@ public class AlgsTableController extends javafx.application.Application {
 
     @FXML
     void initialize() throws IOException, InvalidFormatException {
+
+        if(MainController.hintsOption) {
+            Tooltip closeStart = new Tooltip();
+            closeStart.setText("Нажмите, для того, чтобы закрыть окно");
+            closeStart.setStyle("-fx-text-fill: turquoise;");
+            closeButton.setTooltip(closeStart);
+
+            Tooltip addTip = new Tooltip();
+            addTip.setText("Нажмите, для того, чтобы добавить новую строку");
+            addTip.setStyle("-fx-text-fill: turquoise;");
+            addRowButton.setTooltip(addTip);
+
+            Tooltip removeTip = new Tooltip();
+            removeTip.setText("Нажмите, для того, чтобы удалить выбранную строку");
+            removeTip.setStyle("-fx-text-fill: turquoise;");
+            removeRowButton.setTooltip(removeTip);
+        }
 
         TableColumn bacteriaColumn = new TableColumn("Бактерия");
         bacteriaColumn.setCellValueFactory(new PropertyValueFactory<AlgsData, String>("bacteria"));
@@ -251,6 +268,7 @@ public class AlgsTableController extends javafx.application.Application {
                     @Override
                     public void handle(TableColumn.CellEditEvent<ExceptionInfo, String> t) {
                         infoList.algs.get(t.getTablePosition().getRow()).set(0, t.getNewValue());
+                        mainTable.getItems().get(t.getTablePosition().getRow()).setBacteria(t.getNewValue());
                     }
                 }
         );
@@ -260,6 +278,7 @@ public class AlgsTableController extends javafx.application.Application {
                     @Override
                     public void handle(TableColumn.CellEditEvent<ExceptionInfo, String> t) {
                         infoList.algs.get(t.getTablePosition().getRow()).set(1, t.getNewValue());
+                        mainTable.getItems().get(t.getTablePosition().getRow()).setRange(t.getNewValue());
                     }
                 }
         );
@@ -269,6 +288,7 @@ public class AlgsTableController extends javafx.application.Application {
                     @Override
                     public void handle(TableColumn.CellEditEvent<ExceptionInfo, String> t) {
                         infoList.algs.get(t.getTablePosition().getRow()).set(2, t.getNewValue());
+                        mainTable.getItems().get(t.getTablePosition().getRow()).setRangeInterpretation(t.getNewValue());
                     }
                 }
         );
@@ -279,8 +299,10 @@ public class AlgsTableController extends javafx.application.Application {
                     public void handle(TableColumn.CellEditEvent<ExceptionInfo, String> t) {
                         if(infoList.algs.get(t.getTablePosition().getRow()).size()>3){
                             infoList.algs.get(t.getTablePosition().getRow()).set(3, t.getNewValue());
+                            mainTable.getItems().get(t.getTablePosition().getRow()).setGenus(t.getNewValue());
                         } else {
                             infoList.algs.get(t.getTablePosition().getRow()).add(3, t.getNewValue());
+                            mainTable.getItems().get(t.getTablePosition().getRow()).setGenus(t.getNewValue());
                         }
                     }
                 }
@@ -292,42 +314,29 @@ public class AlgsTableController extends javafx.application.Application {
                     public void handle(TableColumn.CellEditEvent<ExceptionInfo, String> t) {
                         if(infoList.algs.get(t.getTablePosition().getRow()).size()>4){
                             infoList.algs.get(t.getTablePosition().getRow()).set(4, t.getNewValue());
+                            mainTable.getItems().get(t.getTablePosition().getRow()).setDescription(t.getNewValue());
                         } else {
                             infoList.algs.get(t.getTablePosition().getRow()).add(4, t.getNewValue());
+                            mainTable.getItems().get(t.getTablePosition().getRow()).setDescription(t.getNewValue());
                         }
                     }
                 }
         );
 
-        FileInputStream closeStream = new FileInputStream("C:\\Program Files\\gentest_obr\\logout.png");
+        FileInputStream closeStream = new FileInputStream(Application.rootDirPath + "\\logout.png");
         Image closeImage = new Image(closeStream);
         ImageView closeView = new ImageView(closeImage);
         closeButton.graphicProperty().setValue(closeView);
 
-        Tooltip closeStart = new Tooltip();
-        closeStart.setText("Нажмите, для того, чтобы закрыть окно");
-        closeStart.setStyle("-fx-text-fill: turquoise;");
-        closeButton.setTooltip(closeStart);
-
-        FileInputStream addStream = new FileInputStream("C:\\Program Files\\gentest_obr\\addAlgs.png");
+        FileInputStream addStream = new FileInputStream(Application.rootDirPath + "\\addAlgs.png");
         Image addImage = new Image(addStream);
         ImageView addView = new ImageView(addImage);
         addRowButton.graphicProperty().setValue(addView);
 
-        Tooltip addTip = new Tooltip();
-        addTip.setText("Нажмите, для того, чтобы добавить новую строку");
-        addTip.setStyle("-fx-text-fill: turquoise;");
-        addRowButton.setTooltip(addTip);
-
-        FileInputStream removeStream = new FileInputStream("C:\\Program Files\\gentest_obr\\removeAlgs.png");
+        FileInputStream removeStream = new FileInputStream(Application.rootDirPath + "\\removeAlgs.png");
         Image removeImage = new Image(removeStream);
         ImageView removeView = new ImageView(removeImage);
         removeRowButton.graphicProperty().setValue(removeView);
-
-        Tooltip removeTip = new Tooltip();
-        removeTip.setText("Нажмите, для того, чтобы удалить выбранную строку");
-        removeTip.setStyle("-fx-text-fill: turquoise;");
-        removeRowButton.setTooltip(removeTip);
 
         removeRowButton.setOnAction(ActionEvent -> {
             if (mainTable.getSelectionModel().getSelectedIndex() == -1)
@@ -370,7 +379,7 @@ public class AlgsTableController extends javafx.application.Application {
         });
 
         saveButton.setOnAction(actionEvent -> {
-            File file = new File("C:\\Program Files\\gentest_obr\\algs.xlsx");
+            File file = new File(Application.rootDirPath + "\\algs.xlsx");
             String filePath = file.getPath();
             Workbook workbook = null;
             try {
@@ -400,7 +409,7 @@ public class AlgsTableController extends javafx.application.Application {
                 }
             }
             try {
-                workbook.write(new FileOutputStream(new File("C:\\Program Files\\gentest_obr\\algs.xlsx")));
+                workbook.write(new FileOutputStream(new File(Application.rootDirPath + "\\algs.xlsx")));
             } catch (IOException e) {
                 e.printStackTrace();
             }
